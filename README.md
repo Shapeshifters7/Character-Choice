@@ -1,8 +1,8 @@
 # ⚔️ Character Choice — Ultimate Multiverse Battle
 
-**[Jouer maintenant](https://alucnavy.github.io/Character-Choice/)**
+**[Jouer maintenant](https://shapeshifters7.github.io/Character-Choice)**
 
-Des questions ? Des idées ? Des personnages à ajouter ? [Envoie-moi un message](https://github.com/alucnavy) — les contributions sont bienvenues ! 🚀
+Des questions ? Des idées ? Des personnages à ajouter ? [Envoie-moi un message](https://github.com/shapeshifters7) — les contributions sont bienvenues ! 🚀
 
 ---
 
