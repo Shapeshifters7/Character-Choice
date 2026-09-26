@@ -15,7 +15,19 @@
   .controls input[type="search"]{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:220px}
   .controls select{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px}
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:18px}
-  .stat-card{background:rgba(18,21,40,.86);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer;transition:all .3s ease;position:relative}
+  .stat-card{
+    position:relative;
+    background:rgba(18,21,40,.86);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    cursor:pointer;
+    transition:all .28s ease;
+    overflow:hidden;
+  }
   .stat-card:hover{
     transform:scale(1.08);
     border-color:var(--accent);
@@ -26,18 +38,90 @@
   .ranking-position-1{color:#f8d84a}
   .ranking-position-2{color:#cfd5e8}
   .ranking-position-3{color:#d89062}
-  .portrait{width:64px;height:80px;flex:0 0 64px;border-radius:6px;background:#0b0d1a;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .3s ease}
-  .stat-card:hover .portrait{transform:scale(1.15);border-radius:8px}
+  .portrait{
+    width:64px;height:80px;flex:0 0 64px;border-radius:6px;
+    background:#0b0d1a;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;transition:all .28s ease;
+  }
+  .stat-card:hover .portrait{
+    transform:scale(1.15);
+    border-radius:8px;
+  }
   .portrait img{width:100%;height:100%;object-fit:cover;display:block}
-  .stat-info{flex:1;min-width:0;transition:all .3s ease}
-  .stat-info .name{font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;transition:all .3s ease}
-  .stat-card:hover .stat-info .name{font-size:16px;color:var(--accent)}
-  .stat-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-weight:800;font-size:13px;transition:all .3s ease;opacity:0.7}
-  .stat-card:hover .stat-row{opacity:1;font-size:14px}
-  .stat-row .badge{background:rgba(255,255,255,.03);padding:4px 8px;border-radius:8px;font-weight:900;color:#fff;transition:all .2s ease;border:1px solid rgba(255,255,255,.1)}
-  .stat-card:hover .stat-row .badge{background:rgba(248,216,74,.15);border-color:rgba(248,216,74,.4);color:#f8d84a}
-  .stat-row .badge.elo-rank{color:#f8d84a;background:rgba(248,216,74,.08)}
-  .stat-card:hover .stat-row .badge.elo-rank{background:rgba(248,216,74,.25);color:#fff;text-shadow:0 0 10px rgba(248,216,74,.6)}
+  .stat-info{
+    flex:1;min-width:0;transition:all .28s ease;
+  }
+  .stat-info .name{
+    font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-size:14px;transition:all .28s ease;
+  }
+  .stat-card:hover .stat-info .name{
+    font-size:16px;color:var(--accent);
+  }
+  .stat-row{
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    margin-top:8px;color:var(--muted);font-weight:800;font-size:13px;
+    transition:all .28s ease;opacity:0.7;
+  }
+  .stat-card:hover .stat-row{
+    opacity:1;font-size:14px;
+  }
+  .stat-row .badge{
+    background:rgba(255,255,255,.03);
+    padding:4px 8px;border-radius:8px;font-weight:900;color:#fff;
+    transition:all .2s ease;border:1px solid rgba(255,255,255,.1);
+  }
+  .stat-card:hover .stat-row .badge{
+    background:rgba(248,216,74,.15);
+    border-color:rgba(248,216,74,.4);
+    color:#f8d84a;
+  }
+  .stat-row .badge.elo-rank{
+    color:#f8d84a;background:rgba(248,216,74,.08);
+  }
+  .stat-card:hover .stat-row .badge.elo-rank{
+    background:rgba(248,216,74,.25);color:#fff;text-shadow:0 0 10px rgba(248,216,74,.6);
+  }
+
+  .hover-details{
+    position:absolute;
+    left:12px; right:12px; bottom:12px;
+    background:rgba(12,14,26,.96);
+    border:1px solid rgba(248,216,74,.35);
+    border-radius:10px;
+    padding:10px 12px;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    opacity:0;
+    transform:translateY(12px);
+    pointer-events:none;
+    transition:all .25s ease;
+    box-shadow:0 12px 28px rgba(0,0,0,.35);
+  }
+  .stat-card:hover .hover-details{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .hover-detail{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    font-size:12px;
+    color:var(--muted);
+    font-weight:800;
+    min-height:18px;
+  }
+  .hover-detail strong{
+    color:#fff;
+    font-size:12px;
+  }
+  .hover-detail .icon{
+    color:var(--accent);
+    font-size:12px;
+  }
+
   .no-stats{color:var(--muted);padding:20px;text-align:center}
   .loading{color:var(--muted);padding:18px}
   .metric-display{background:rgba(18,21,40,.86);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:18px;text-align:center;display:none}
@@ -53,6 +137,11 @@
     .stat-card:hover .stat-info .name{font-size:15px}
     .stat-card{padding:10px}
     .portrait{width:56px;height:68px}
+    .hover-details{
+      grid-template-columns:1fr 1fr;
+      left:8px; right:8px; bottom:8px;
+      padding:8px 10px;
+    }
   }
 </style>
 </head>
@@ -239,6 +328,7 @@ function renderGrid(list){
 
     const info = document.createElement("div");
     info.className = "stat-info";
+
     const nameEl = document.createElement("div");
     nameEl.className = "name";
     nameEl.title = item.displayName || item.name || item.id || "";
@@ -282,6 +372,31 @@ function renderGrid(list){
 
     info.appendChild(statsRow);
     card.appendChild(info);
+
+    const hoverDetails = document.createElement("div");
+    hoverDetails.className = "hover-details";
+
+    const detailWins = document.createElement("div");
+    detailWins.className = "hover-detail";
+    detailWins.innerHTML = '<span class="icon">🏆</span><span>Victoires</span><strong>' + (item.wins ?? 0) + '</strong>';
+    hoverDetails.appendChild(detailWins);
+
+    const detailLosses = document.createElement("div");
+    detailLosses.className = "hover-detail";
+    detailLosses.innerHTML = '<span class="icon">💀</span><span>Défaites</span><strong>' + (item.losses ?? 0) + '</strong>';
+    hoverDetails.appendChild(detailLosses);
+
+    const detailElo = document.createElement("div");
+    detailElo.className = "hover-detail";
+    detailElo.innerHTML = '<span class="icon">📊</span><span>Elo</span><strong>' + (item.elo ?? 1600) + '</strong>';
+    hoverDetails.appendChild(detailElo);
+
+    const detailFights = document.createElement("div");
+    detailFights.className = "hover-detail";
+    detailFights.innerHTML = '<span class="icon">⚔️</span><span>Combats</span><strong>' + (item.fights ?? 0) + '</strong>';
+    hoverDetails.appendChild(detailFights);
+
+    card.appendChild(hoverDetails);
     frag.appendChild(card);
   }
   gridEl.appendChild(frag);
