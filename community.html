@@ -14,9 +14,6 @@
   .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .controls input[type="search"]{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:220px}
   .controls select{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px}
-  .community-summary{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 18px}
-  .summary-pill{background:rgba(18,21,40,.86);border:1px solid var(--line);padding:10px 12px;border-radius:12px;color:var(--muted);font-weight:800}
-  .summary-pill strong{display:block;color:var(--accent);font-size:20px}
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:18px}
   .stat-card{background:rgba(18,21,40,.86);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center}
   .ranking-position{min-width:34px;font-size:18px;font-weight:1000;color:var(--muted);text-align:center}
@@ -39,7 +36,6 @@
   @media(max-width:700px){
     .community-header{align-items:flex-start}
     .controls input[type="search"]{min-width:140px;width:100%}
-    .community-summary{flex-direction:column;gap:8px}
     .stat-card{padding:10px}
     .portrait{width:56px;height:68px}
   }
@@ -88,12 +84,6 @@
 
   <div id="status" class="loading">Chargement…</div>
 
-  <div class="community-summary" id="summary" aria-hidden="true" style="display:none">
-    <div class="summary-pill"><small>Total combats</small><strong id="totalFights">0</strong></div>
-    <div class="summary-pill"><small>Total victoires</small><strong id="totalWins">0</strong></div>
-    <div class="summary-pill"><small>Personnages avec stats</small><strong id="charactersWithStats">0</strong></div>
-  </div>
-
   <div id="metricTopWins" class="metric-display">
     <div class="eyebrow">Personnage le plus victorieux</div>
     <h3 id="topWinsName">—</h3>
@@ -120,10 +110,6 @@ const gridEl = document.getElementById("grid");
 const searchEl = document.getElementById("search");
 const sortEl = document.getElementById("sort");
 const metricEl = document.getElementById("metric");
-const summaryEl = document.getElementById("summary");
-const totalFightsEl = document.getElementById("totalFights");
-const totalWinsEl = document.getElementById("totalWins");
-const charactersWithStatsEl = document.getElementById("charactersWithStats");
 
 const metricTopWins = document.getElementById("metricTopWins");
 const metricTopRate = document.getElementById("metricTopRate");
@@ -305,17 +291,6 @@ function applyFiltersAndRender(){
   renderGrid(list);
 }
 
-function renderSummary(){
-  const totalFights = mapped.reduce((s,i)=> s + (i.fights || 0), 0);
-  const totalWins = mapped.reduce((s,i)=> s + (i.wins || 0), 0);
-  const charactersWithStats = mapped.length;
-  totalFightsEl.textContent = totalFights;
-  totalWinsEl.textContent = totalWins;
-  charactersWithStatsEl.textContent = charactersWithStats;
-  summaryEl.style.display = charactersWithStats ? "flex" : "none";
-  summaryEl.setAttribute("aria-hidden", charactersWithStats ? "false" : "true");
-}
-
 function getTopWins(){
   return [...mapped].sort((a,b) => (b.wins||0) - (a.wins||0) || (b.fights||0) - (a.fights||0))[0] || null;
 }
@@ -380,7 +355,6 @@ function loadCommunityStats(){
 
       statusEl.style.display = "none";
       statusEl.className = "";
-      renderSummary();
       applyFiltersAndRender();
       updateMetricDisplay();
     })
