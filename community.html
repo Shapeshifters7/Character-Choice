@@ -15,17 +15,29 @@
   .controls input[type="search"]{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:220px}
   .controls select{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px}
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:18px}
-  .stat-card{background:rgba(18,21,40,.86);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center}
+  .stat-card{background:rgba(18,21,40,.86);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer;transition:all .3s ease;position:relative}
+  .stat-card:hover{
+    transform:scale(1.08);
+    border-color:var(--accent);
+    box-shadow:0 0 30px rgba(248,216,74,.35),inset 0 0 20px rgba(248,216,74,.08);
+    z-index:10;
+  }
   .ranking-position{min-width:34px;font-size:18px;font-weight:1000;color:var(--muted);text-align:center}
   .ranking-position-1{color:#f8d84a}
   .ranking-position-2{color:#cfd5e8}
   .ranking-position-3{color:#d89062}
-  .portrait{width:64px;height:80px;flex:0 0 64px;border-radius:6px;background:#0b0d1a;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .portrait{width:64px;height:80px;flex:0 0 64px;border-radius:6px;background:#0b0d1a;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .3s ease}
+  .stat-card:hover .portrait{transform:scale(1.15);border-radius:8px}
   .portrait img{width:100%;height:100%;object-fit:cover;display:block}
-  .stat-info{flex:1;min-width:0}
-  .stat-info .name{font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .stat-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-weight:800;font-size:13px}
-  .stat-row .badge{background:rgba(255,255,255,.03);padding:4px 8px;border-radius:8px;font-weight:900;color:#fff}
+  .stat-info{flex:1;min-width:0;transition:all .3s ease}
+  .stat-info .name{font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;transition:all .3s ease}
+  .stat-card:hover .stat-info .name{font-size:16px;color:var(--accent)}
+  .stat-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-weight:800;font-size:13px;transition:all .3s ease;opacity:0.7}
+  .stat-card:hover .stat-row{opacity:1;font-size:14px}
+  .stat-row .badge{background:rgba(255,255,255,.03);padding:4px 8px;border-radius:8px;font-weight:900;color:#fff;transition:all .2s ease;border:1px solid rgba(255,255,255,.1)}
+  .stat-card:hover .stat-row .badge{background:rgba(248,216,74,.15);border-color:rgba(248,216,74,.4);color:#f8d84a}
+  .stat-row .badge.elo-rank{color:#f8d84a;background:rgba(248,216,74,.08)}
+  .stat-card:hover .stat-row .badge.elo-rank{background:rgba(248,216,74,.25);color:#fff;text-shadow:0 0 10px rgba(248,216,74,.6)}
   .no-stats{color:var(--muted);padding:20px;text-align:center}
   .loading{color:var(--muted);padding:18px}
   .metric-display{background:rgba(18,21,40,.86);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:18px;text-align:center;display:none}
@@ -36,6 +48,9 @@
   @media(max-width:700px){
     .community-header{align-items:flex-start}
     .controls input[type="search"]{min-width:140px;width:100%}
+    .stat-card:hover{transform:scale(1.03)}
+    .stat-card:hover .portrait{transform:scale(1.08)}
+    .stat-card:hover .stat-info .name{font-size:15px}
     .stat-card{padding:10px}
     .portrait{width:56px;height:68px}
   }
@@ -68,11 +83,11 @@
     <div class="controls" role="region" aria-label="Contrôles de recherche et tri">
       <input id="search" type="search" placeholder="Rechercher un personnage…" aria-label="Rechercher un personnage">
       <select id="sort" aria-label="Trier par">
-        <option value="elo">Trier : Elo (desc)</option>
-        <option value="wins">Trier : Victoires (desc)</option>
-        <option value="fights">Trier : Combats (desc)</option>
-        <option value="winRate">Trier : Taux de victoire (desc)</option>
-        <option value="name">Trier : Nom (A→Z)</option>
+        <option value="elo">Trier par : Elo — meilleur d'abord</option>
+        <option value="wins">Trier par : victoires — plus grand nombre</option>
+        <option value="fights">Trier par : combats — plus grand nombre</option>
+        <option value="winRate">Trier par : taux de victoire — meilleur d'abord</option>
+        <option value="name">Trier par : nom — A à Z</option>
       </select>
       <select id="metric" aria-label="Afficher une métrique spéciale">
         <option value="ranking">Classement général</option>
