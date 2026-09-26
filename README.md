@@ -131,28 +131,18 @@ Un seul clic pour un nouveau tournoi.
 - **Aucun compte requis** : authentification anonyme
 
 ---
-
-## 🚀 Lancer le projet
-
-### En local
-
-```bash
-python3 -m http.server 8000
-# ou
-http-server
-
----
-
 📖 Pages du jeu
 
 🏆 Tournoi — arène principale, les duels
 📊 Statistiques — analyse de votre tournoi
 📜 Historique — tous les combats, export CSV
 🌐 Communauté — classement Elo global
-
+🏁 Résumé
 
 Character Choice transforme un concept simple en expérience immersive et compétitive.
 
 Choisissez. Gagnez. Dominez le classement.
 
-Prêt à devenir champion ? Joue maintenant → https://shapeshifters7.github.io/Character-Choice
+Prêt à devenir champion ? Jouez Maintenant
+
+Character Choice — Parce que chaque choix compte.
