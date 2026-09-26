@@ -1,4 +1,3 @@
-
 let IMAGE_CATALOG = {};
 const STORAGE_KEY = "characterChoiceV35";
 const BEST_KEY = "characterChoiceV35Best";
@@ -15,7 +14,7 @@ function getImageCandidates(character) {
   const normalize = (value) => value
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/['’]/g, "")
+    .replace(/['']/g, "")
     .replace(/&/g, "and")
     .replace(/[^a-zA-Z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "")
@@ -107,25 +106,6 @@ let characterStats = loadCharacterStats();
 
 function saveCharacterStats() {
   localStorage.setItem(CHARACTER_STATS_KEY, JSON.stringify(characterStats));
-}
-
-function updateCharacterStats(winner, loser) {
-  if (!winner || !loser) return;
-
-  const ensure = (character) => {
-    const id = String(character.id);
-    if (!characterStats[id] || typeof characterStats[id] !== "object") {
-      characterStats[id] = { name: character.name, wins: 0, losses: 0 };
-    }
-    characterStats[id].name = character.name;
-    characterStats[id].wins = Math.max(0, Number(characterStats[id].wins) || 0);
-    characterStats[id].losses = Math.max(0, Number(characterStats[id].losses) || 0);
-    return characterStats[id];
-  };
-
-  ensure(winner).wins += 1;
-  ensure(loser).losses += 1;
-  saveCharacterStats();
 }
 
 function save() {
@@ -254,7 +234,7 @@ async function loadPortrait(character, el) {
   const raw = String(character.name || "").trim();
   const id = characterId;
   const stripAccents = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const noApostrophe = (s) => s.replace(/[\'’]/g, "");
+  const noApostrophe = (s) => s.replace(/[\'']/g, "");
   const clean = (s) => noApostrophe(stripAccents(s));
   const variants = [
     raw,
@@ -471,6 +451,19 @@ function toast(message) {
   setTimeout(() => el.classList.remove("show"), 1800);
 }
 
+// Système Elo
+const K = 32; // Facteur Elo (32 = modéré, 16 = stable, 64 = volatil)
+
+function calculateEloChange(winnerElo, loserElo) {
+  const expectedWinner = 1 / (1 + Math.pow(10, (loserElo - winnerElo) / 400));
+  const expectedLoser = 1 / (1 + Math.pow(10, (winnerElo - loserElo) / 400));
+
+  const winnerChange = Math.round(K * (1 - expectedWinner));
+  const loserChange = Math.round(K * (0 - expectedLoser));
+
+  return { winnerChange, loserChange };
+}
+
 // Révocation / décrémentation des stats communautaires (dans Firestore).
 // Si Firestore n'est pas disponible, on ignore silencieusement.
 async function revertCommunityStats(winnerId, loserId) {
@@ -489,17 +482,25 @@ async function revertCommunityStats(winnerId, loserId) {
       // Récupère les valeurs actuelles (ou 0 par défaut)
       const wWins = Math.max(0, Number(wData.wins || 0));
       const wFights = Math.max(0, Number(wData.fights || (wData.wins || 0) + (wData.losses || 0) || 0));
+      const wElo = Number(wData.elo || 1600);
+      
       const lLosses = Math.max(0, Number(lData.losses || 0));
       const lFights = Math.max(0, Number(lData.fights || (lData.wins || 0) + (lData.losses || 0) || 0));
+      const lElo = Number(lData.elo || 1600);
 
-      // Décrémente en évitant les valeurs négatives
+      // Décrémente les compteurs en évitant les valeurs négatives
       const newWWins = Math.max(0, wWins - 1);
       const newWFights = Math.max(0, wFights - 1);
       const newLLosses = Math.max(0, lLosses - 1);
       const newLFights = Math.max(0, lFights - 1);
 
-      tx.set(winnerRef, { wins: newWWins, fights: newWFights, name: wData.name || undefined }, { merge: true });
-      tx.set(loserRef, { losses: newLLosses, fights: newLFights, name: lData.name || undefined }, { merge: true });
+      // Recalculer les Elos inversés
+      const { winnerChange, loserChange } = calculateEloChange(wElo, lElo);
+      const newWElo = Math.max(400, Math.min(3200, wElo - winnerChange));
+      const newLElo = Math.max(400, Math.min(3200, lElo - loserChange));
+
+      tx.set(winnerRef, { wins: newWWins, fights: newWFights, elo: newWElo, name: wData.name || undefined }, { merge: true });
+      tx.set(loserRef, { losses: newLLosses, fights: newLFights, elo: newLElo, name: lData.name || undefined }, { merge: true });
     });
   } catch (err) {
     // Ne pas bloquer l'UX : log et continuer. L'utilisateur garde ses stats locales restaurées.
@@ -605,34 +606,55 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") save();
 });
 
-function syncCommunityStats(winner, loser) {
+async function syncCommunityStats(winner, loser) {
   if (!window.db || !window.firestoreReady) return Promise.resolve();
 
   const db = window.db;
-  const batch = db.batch();
 
-  const winnerRef = db.collection("communityCharacterStats").doc(String(winner.id));
-  const loserRef = db.collection("communityCharacterStats").doc(String(loser.id));
+  try {
+    // Récupérer les Elos actuels
+    const winnerDoc = await db.collection("communityCharacterStats").doc(String(winner.id)).get();
+    const loserDoc = await db.collection("communityCharacterStats").doc(String(loser.id)).get();
 
-  batch.set(winnerRef, {
-    id: String(winner.id),
-    name: winner.name,
-    wins: firebase.firestore.FieldValue.increment(1),
-    losses: firebase.firestore.FieldValue.increment(0),
-    fights: firebase.firestore.FieldValue.increment(1),
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    const winnerElo = (winnerDoc.exists ? winnerDoc.data().elo : 1600) || 1600;
+    const loserElo = (loserDoc.exists ? loserDoc.data().elo : 1600) || 1600;
 
-  batch.set(loserRef, {
-    id: String(loser.id),
-    name: loser.name,
-    wins: firebase.firestore.FieldValue.increment(0),
-    losses: firebase.firestore.FieldValue.increment(1),
-    fights: firebase.firestore.FieldValue.increment(1),
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    // Calculer les changements Elo
+    const { winnerChange, loserChange } = calculateEloChange(winnerElo, loserElo);
 
-  return batch.commit().catch(() => {});
+    const newWinnerElo = Math.max(400, Math.min(3200, winnerElo + winnerChange));
+    const newLoserElo = Math.max(400, Math.min(3200, loserElo + loserChange));
+
+    // Écrire dans Firestore
+    const batch = db.batch();
+
+    const winnerRef = db.collection("communityCharacterStats").doc(String(winner.id));
+    const loserRef = db.collection("communityCharacterStats").doc(String(loser.id));
+
+    batch.set(winnerRef, {
+      id: String(winner.id),
+      name: winner.name,
+      wins: firebase.firestore.FieldValue.increment(1),
+      losses: firebase.firestore.FieldValue.increment(0),
+      fights: firebase.firestore.FieldValue.increment(1),
+      elo: newWinnerElo,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    batch.set(loserRef, {
+      id: String(loser.id),
+      name: loser.name,
+      wins: firebase.firestore.FieldValue.increment(0),
+      losses: firebase.firestore.FieldValue.increment(1),
+      fights: firebase.firestore.FieldValue.increment(1),
+      elo: newLoserElo,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    return batch.commit().catch(() => {});
+  } catch (err) {
+    console.error("Erreur syncCommunityStats :", err);
+  }
 }
 
 function updateCharacterStats(winner, loser) {
