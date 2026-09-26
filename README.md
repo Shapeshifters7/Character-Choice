@@ -1,102 +1,158 @@
 # ⚔️ Character Choice — Ultimate Multiverse Battle
 
-https://alucnavy.github.io/Character-Choice/
+**[Jouer maintenant](https://alucnavy.github.io/Character-Choice/)**
 
-#N'hésitez pas a m'envoyer des idées (amélioration ou personnage).
+Des questions ? Des idées ? Des personnages à ajouter ? [Envoie-moi un message](https://github.com/alucnavy) — les contributions sont bienvenues ! 🚀
 
-Character Choice est un jeu de duel basé sur un principe simple :
+---
+
+## 🎮 Le concept
+
+Character Choice est un jeu de duel infini basé sur un principe addictif :
 
 > **Deux personnages s'affrontent. Lequel préférez-vous ?**
 
-À chaque combat, deux personnages sont présentés et le joueur doit choisir son favori. Le personnage sélectionné devient alors le **champion** et continue son parcours face à de nouveaux adversaires.
+À chaque tour, deux personnages iconiques se font face. Vous choisissez votre favori. Le personnage sélectionné devient **champion** et affronte un nouveau défi. Votre série continue jusqu'à battre votre record.
 
-Le jeu rassemble des personnages issus de nombreux univers : films, séries, jeux vidéo, animation, anime, littérature et bien plus encore.
-De nouveaux personnages sont ajoutés régulièrement : Dernier ajout 25/09/26 
+Simple. Addictif. Communautaire.
 
 ---
 
-## 🎮 Fonctionnalités
+## 🌌 625+ personnages
 
-### ⚔️ Système de duel
+Le jeu rassemble des centaines de personnages issus de :
 
-- Deux personnages s'affrontent à chaque tour.
-- Le joueur choisit son personnage préféré.
-- Le personnage choisi devient le champion.
-- Un nouveau challenger est ensuite présenté.
-- Les personnages déjà rencontrés sont gérés automatiquement afin d'éviter les doublons inutiles.
+- 🎬 **Films** : Batman, Joker, Ellen Ripley, Jack Sparrow...
+- 📺 **Séries** : Breaking Bad, Game of Thrones, Stranger Things, The Boys...
+- 🎮 **Jeux vidéo** : Kratos, Link, Solid Snake, Elden Ring...
+- 🎨 **Animation** : Studio Ghibli, Disney, Pixar, DreamWorks...
+- ⛩️ **Manga / Anime** : One Piece, Naruto, JJK, Attack on Titan...
+- 📖 **Littérature** : Harry Potter, Le Seigneur des Anneaux, Sherlock...
+- 💎 **Comics** : Marvel, DC, indépendants...
 
-### 🏆 Système de tournoi
+De nouveaux personnages sont ajoutés régulièrement. **Dernière mise à jour : 25/09/2026**
 
-Le jeu conserve différentes informations au cours d'un tournoi :
+---
+
+## ⚔️ Comment ça marche
+
+1. Deux cartes apparaissent avec champion vs challenger
+2. Vous cliquez sur votre personnage préféré
+3. Il devient le nouveau champion
+4. Un nouveau challenger arrive
+5. Votre série monte, votre record se bâtit
+6. Continuez jusqu'à battre votre meilleur résultat
+
+**Chaque choix compte.**
+
+---
+
+## 🏆 Fonctionnalités
+
+### 📈 Système de tournoi complet
+
+- ⚔️ Duels en direct
+- 🔥 Série de victoires en temps réel
+- 🏅 Record absolu du joueur
+- 📊 Progression complète du tournoi
+- 🔄 Annulation du dernier combat
+- 🎯 Mécanisme d'évitement des doublons
+
+### 📊 Statistiques personnelles
+
+Suivez l'évolution de votre tournoi :
 
 - Nombre de combats joués
-- Série de victoires actuelle
-- Meilleure série
+- Série actuelle et meilleure série
 - Record absolu
-- Nombre de personnages rencontrés
-- Nombre de champions différents
-- Progression du tournoi
+- Personnages rencontrés
+- Médias représentés dans vos combats
+
+### 🧮 Stats par personnage
+
+Chaque personnage accumule ses propres statistiques **permanentes** :
+
+| Personnage | Victoires | Défaites | Elo |
+|-----------|-----------|----------|-----|
+| Batman | 42 | 15 | 1847 |
+| Spider-Man | 38 | 18 | 1792 |
+| Mario | 28 | 31 | 1654 |
+
+Ces stats persistent entre les tournois. Recommencez un tournoi sans perdre vos données.
+
+### 🌐 Classement communautaire
+
+Compétez contre la communauté :
+
+- 🏆 Classement global par Elo
+- 📊 Classement par victoires
+- 💪 Taux de victoire des personnages
+- 🔍 Filtres et recherche
+- ✨ Données en direct via Firebase
+
+Le système **Elo** rend le classement juste :
+- Battre un personnage fort = gros gain
+- Perdre face à un faible = perte importante
+- Personnages équilibrés = gains normaux
+
+### 📜 Historique complet
+
+- Voir tous vos combats
+- Rechercher par personnage, univers ou média
+- Exporter en CSV pour l'analyse
 
 ---
 
-## 📊 Statistiques
+## 🎯 Statistiques de tournoi
 
-Character Choice possède un système de statistiques permettant de suivre l'évolution des parties.
+Voici ce que vous suivez en direct :
+⚔️ Nb Combat / 🔥 Série actuelle / 🏅 Meilleure série / 👥 Nb Personnages vus / 🎭 Médias représentés
 
-### Statistiques de tournoi
-
-Les statistiques liées aux parties permettent notamment de suivre :
-
-- Les combats joués
-- La série actuelle
-- La meilleure série
-- Le record absolu
-- Les personnages rencontrés
-- Les différents médias représentés
-
-### ⚔️ Statistiques par personnage
-
-Chaque personnage possède également ses propres statistiques permanentes :
-
-| Personnage | Victoires | Défaites |
-|------------|-----------|----------|
-| Batman | 8 | 3 |
-| Spider-Man | 5 | 4 |
-| Mario | 3 | 6 |
-
-Les victoires et défaites des personnages sont conservées indépendamment des tournois.
-
-Il est donc possible de commencer un nouveau tournoi sans perdre les statistiques accumulées par les personnages.
 
 ---
 
-## 🗑️ Réinitialisation
+## 🗑️ Réinitialiser
 
-Les statistiques par personnage peuvent être réinitialisées grâce au bouton :
+Vous pouvez recommencer un tournoi sans perdre :
 
-**Réinitialiser les statistiques des personnages**
+- ✅ Les stats permanentes des personnages
+- ✅ Votre record absolu
+- ✅ Vos meilleures performances
 
-Cette action remet uniquement les compteurs de victoires et de défaites des personnages à zéro.
-
-Les autres données du jeu ne sont pas affectées.
+Un seul clic pour un nouveau tournoi.
 
 ---
 
-## 📚 Base de personnages
+## 🔐 Sécurité et données
 
-Le jeu contient actuellement **615 personnages** provenant de différents univers.
+- **Données locales** : tournoi, historique → `localStorage`
+- **Données communautaires** : Elo, classement → Firebase Firestore
+- **Règles strictes** : écriture limitée et validée côté serveur
+- **Aucun compte requis** : authentification anonyme
 
-Chaque personnage possède notamment :
+---
 
-- Un identifiant unique
-- Un nom
-- Une image
-- Un média ou univers associé
-- Ses statistiques de victoires
-- Ses statistiques de défaites
+## 🚀 Lancer le projet
 
-La liste des personnages est centralisée dans :
+### En local
 
-```text
-characters.js
+```bash
+python3 -m http.server 8000
+# ou
+http-server
 
+---
+
+📖 Pages du jeu
+
+🏆 Tournoi — arène principale, les duels
+📊 Statistiques — analyse de votre tournoi
+📜 Historique — tous les combats, export CSV
+🌐 Communauté — classement Elo global
+
+
+Character Choice transforme un concept simple en expérience immersive et compétitive.
+
+Choisissez. Gagnez. Dominez le classement.
+
+Prêt à devenir champion ? Joue maintenant → https://shapeshifters7.github.io/Character-Choice
