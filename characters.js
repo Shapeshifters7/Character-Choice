@@ -4409,5 +4409,110 @@ const CHARACTERS = [
   "media": "Séries",
   "id": "c630",
   "wiki": "Elena Gilbert"
+},
+{
+  "name": "Icy",
+  "universe": "Winx Club",
+  "media": "Dessin Animé",
+  "id": "c631",
+  "wiki": "Icy (Winx Club)"
+},
+{
+  "name": "Saitama",
+  "universe": "One Punch Man",
+  "media": "Anime/Manga",
+  "id": "c632",
+  "wiki": "Saitama"
+},
+{
+  "name": "Alien X",
+  "universe": "Ben 10",
+  "media": "Dessin Animé",
+  "id": "c633",
+  "wiki": "Alien X"
+},
+{
+  "name": "Anti-Spiral",
+  "universe": "Gurren Lagann",
+  "media": "Anime",
+  "id": "c634",
+  "wiki": "Anti-Spiral"
+},
+{
+  "name": "Kong",
+  "universe": "King Kong",
+  "media": "Films",
+  "id": "c635",
+  "wiki": "King Kong"
+},
+{
+  "name": "Subaru Natsuki",
+  "universe": "Re:Zero",
+  "media": "Anime/Manga",
+  "id": "c636",
+  "wiki": "Subaru Natsuki"
+},
+{
+  "name": "Elsa",
+  "universe": "La Reine des neiges",
+  "media": "Films/Animation",
+  "id": "c637",
+  "wiki": "Elsa (La Reine des neiges)"
+},
+{
+  "name": "Peter Pan",
+  "universe": "Peter Pan",
+  "media": "Films/Animation/Romans",
+  "id": "c638",
+  "wiki": "Peter Pan"
+},
+{
+  "name": "La Sorcière Blanche",
+  "universe": "Le Monde de Narnia",
+  "media": "Films/Romans",
+  "id": "c639",
+  "wiki": "Jadis"
+},
+{
+  "name": "Maléfique",
+  "universe": "Disney",
+  "media": "Films/Animation",
+  "id": "c640",
+  "wiki": "Maléfique (Disney)"
+},
+{
+  "name": "Eddie Diaz",
+  "universe": "9-1-1",
+  "media": "Séries",
+  "id": "c641",
+  "wiki": "Eddie Diaz"
+},
+{
+  "name": "White Canary",
+  "universe": "DC Comics",
+  "media": "Séries",
+  "id": "c642",
+  "wiki": "Sara Lance"
+},
+{
+  "name": "Joe Goldberg",
+  "universe": "You",
+  "media": "Séries",
+  "id": "c643",
+  "wiki": "Joe Goldberg"
+},
+{
+  "name": "Jack-Jack",
+  "universe": "Les Indestructibles",
+  "media": "Films/Animation",
+  "id": "c644",
+  "wiki": "Jack-Jack Parr"
+},
+{
+  "name": "Lucy",
+  "universe": "Lucy",
+  "media": "Films",
+  "id": "c645",
+  "wiki": "Lucy (film)"
 }
 ];
