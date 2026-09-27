@@ -555,7 +555,7 @@ function showHome() {
           <div class="option-icon">🌌</div>
           <h2>Catalogue Complet</h2>
           <p><strong id="fullPoolCount">645</strong> personnages</p>
-          <button class="option-btn full-pool-btn">Commencer</button>
+          <button class="option-btn full-pool-btn" type="button">Commencer</button>
         </div>
         
         <div class="option-card custom-pool">
@@ -572,7 +572,7 @@ function showHome() {
               value="100"
               placeholder="Entre 10 et 645"
             >
-            <button class="option-btn custom-pool-btn">Commencer</button>
+            <button class="option-btn custom-pool-btn" type="button">Commencer</button>
           </div>
         </div>
       </div>
@@ -582,6 +582,28 @@ function showHome() {
       </div>
     </div>
   `;
+
+  attachHomeListeners();
+}
+
+function attachHomeListeners() {
+  const fullPoolBtn = document.querySelector(".full-pool-btn");
+  const customPoolBtn = document.querySelector(".custom-pool-btn");
+  const poolSizeInput = $("poolSizeInput");
+
+  if (fullPoolBtn) {
+    fullPoolBtn.onclick = () => startGame(null);
+  }
+
+  if (customPoolBtn) {
+    customPoolBtn.onclick = startGameCustom;
+  }
+
+  if (poolSizeInput) {
+    poolSizeInput.onkeypress = (e) => {
+      if (e.key === "Enter") startGameCustom();
+    };
+  }
 }
 
 function hideHome() {
@@ -622,27 +644,11 @@ function startGameCustom() {
   startGame(size);
 }
 
-// === DÉLÉGATION D'ÉVÉNEMENTS GLOBALE ===
-document.addEventListener("click", (e) => {
-  const homeContainer = $("homeContainer");
-  
-  // Si on est sur la page d'accueil
-  if (homeContainer && homeContainer.style.display !== "none") {
-    if (e.target.classList.contains("full-pool-btn")) {
-      startGame(null);
-    }
-    if (e.target.classList.contains("custom-pool-btn")) {
-      startGameCustom();
-    }
-  }
-});
-
 // === INITIALISATION ===
 document.addEventListener("DOMContentLoaded", () => {
-  // Charger l'état APRÈS le DOM
   state = loadState();
 
-  // Attacher les event listeners qui dépendent du DOM
+  // Attacher les event listeners de l'arène
   const chooseChampion = $("chooseChampion");
   const chooseChallenger = $("chooseChallenger");
   const championCard = $("championCard");
@@ -749,11 +755,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Vérifier si une partie est en cours
   if (state && state.championId && state.usedIds && state.usedIds.length > 0) {
-    // Partie existante : afficher l'arène
     hideHome();
     render();
   } else {
-    // Aucune partie : afficher la page d'accueil
     showHome();
   }
 });
