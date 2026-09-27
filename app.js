@@ -592,17 +592,28 @@ function attachHomeListeners() {
   const poolSizeInput = $("poolSizeInput");
 
   if (fullPoolBtn) {
-    fullPoolBtn.onclick = () => startGame(null);
+    fullPoolBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      startGame(null);
+    });
   }
 
   if (customPoolBtn) {
-    customPoolBtn.onclick = startGameCustom;
+    customPoolBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      startGameCustom();
+    });
   }
 
   if (poolSizeInput) {
-    poolSizeInput.onkeypress = (e) => {
-      if (e.key === "Enter") startGameCustom();
-    };
+    poolSizeInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        startGameCustom();
+      }
+    });
   }
 }
 
