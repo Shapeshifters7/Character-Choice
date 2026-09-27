@@ -1,44 +1,53 @@
+// app.js
 let IMAGE_CATALOG = {};
 const STORAGE_KEY = "characterChoiceV35";
 const BEST_KEY = "characterChoiceV35Best";
 const BEST_HOLDER_KEY = "characterChoiceV35BestHolder";
 const CHARACTER_STATS_KEY = "characterChoiceV35CharacterStats";
 
-const $ = id => document.getElementById(id);
-let state;
+const $ = (id) => document.getElementById(id);
+
+let state = null;
+let characterStats = loadCharacterStats();
 
 function getImageCandidates(character) {
   const rawName = String(character?.name || "").trim();
   const id = String(character?.id ?? "").trim();
 
-  const normalize = (value) => value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/['']/g, "")
-    .replace(/&/g, "and")
-    .replace(/[^a-zA-Z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "")
-    .toLowerCase();
+  const normalize = (value) =>
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/['']/g, "")
+      .replace(/&/g, "and")
+      .replace(/[^a-zA-Z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .toLowerCase();
 
   const variants = [
     rawName,
     rawName.replace(/[-–—]/g, " "),
-    rawName.replace(/\([^)]*\)/g, "").trim()
+    rawName.replace(/\([^)]*\)/g, "").trim(),
   ];
 
   const slugs = [...new Set(variants.map(normalize).filter(Boolean))];
   const candidates = [];
 
-  const rawVariants = [...new Set(variants.map(v => v.trim()).filter(Boolean))];
+  const rawVariants = [...new Set(variants.map((v) => v.trim()).filter(Boolean))];
   for (const name of rawVariants) {
     candidates.push(`images/${id}_${name}.jpg`);
     candidates.push(`images/${id}_${name}.jpeg`);
+    candidates.push(`images/${id}_${name}.png`);
   }
+
   for (const slug of slugs) {
     candidates.push(`images/${id}_${slug}.jpg`);
     candidates.push(`images/${id}_${slug}.jpeg`);
+    candidates.push(`images/${id}_${slug}.png`);
+    candidates.push(`images/${slug}.jpg`);
+    candidates.push(`images/${slug}.jpeg`);
+    candidates.push(`images/${slug}.png`);
   }
-  for (const slug of slugs) candidates.push(`images/${slug}.jpg`);
 
   return [...new Set(candidates)];
 }
@@ -47,62 +56,40 @@ function getImagePath(character) {
   return getImageCandidates(character)[0] || "";
 }
 
-function loadCharacterImage(img, character) {
-  const candidates = getImageCandidates(character);
-  let index = 0;
-
-  const tryNext = () => {
-    if (index >= candidates.length) {
-      img.removeAttribute("src");
-      img.alt = `Visuel introuvable pour ${character?.name || "ce personnage"}`;
-      const parent = img.parentElement;
-      if (parent) {
-        parent.classList.add("image-missing");
-        parent.setAttribute("data-image-status", "missing");
-      }
-      return;
-    }
-
-    const candidate = candidates[index++];
-    img.onerror = tryNext;
-    img.onload = () => {
-      const parent = img.parentElement;
-      if (parent) {
-        parent.classList.remove("image-missing");
-        parent.classList.add("image-found");
-        parent.setAttribute("data-image-status", "found");
-      }
-    };
-    img.src = candidate;
-  };
-
-  tryNext();
-}
-
 function slug(text) {
-  return text.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 function initials(name) {
-  return name.split(/\s+/).filter(Boolean).slice(0,2).map(x => x[0]).join("").toUpperCase();
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((x) => x[0])
+    .join("")
+    .toUpperCase();
 }
 
 function loadCharacterStats() {
   try {
     const raw = JSON.parse(localStorage.getItem(CHARACTER_STATS_KEY) || "{}");
     return raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
-  } catch (e) {
+  } catch {
     return {};
   }
 }
-
-let characterStats = loadCharacterStats();
 
 function saveCharacterStats() {
   localStorage.setItem(CHARACTER_STATS_KEY, JSON.stringify(characterStats));
 }
 
 function save() {
+  if (!state) return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   localStorage.setItem(BEST_KEY, String(state.bestRecord || 0));
   localStorage.setItem(BEST_HOLDER_KEY, state.bestRecordHolder || "");
@@ -111,31 +98,56 @@ function save() {
 function loadState() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-    if (raw && raw.championId && Array.isArray(raw.usedIds) && Object.prototype.hasOwnProperty.call(raw, "challengerId")) {
-      if (!Object.prototype.hasOwnProperty.call(raw, "lastSnapshot")) raw.lastSnapshot = null;
+
+    if (raw && typeof raw === "object") {
+      if (!Array.isArray(raw.usedIds)) raw.usedIds = [];
       if (!Array.isArray(raw.history)) raw.history = [];
       if (!Number.isFinite(Number(raw.bestRecord))) raw.bestRecord = 0;
       if (typeof raw.bestRecordHolder !== "string") raw.bestRecordHolder = "";
-      if (!raw.usedIds.includes(raw.championId)) raw.usedIds.unshift(raw.championId);
-      if (raw.challengerId && !raw.usedIds.includes(raw.challengerId)) raw.usedIds.push(raw.challengerId);
-      return raw;
+      if (!Object.prototype.hasOwnProperty.call(raw, "lastSnapshot")) raw.lastSnapshot = null;
+
+      if (raw.championId && raw.challengerId && Array.isArray(raw.usedIds)) {
+        if (!raw.usedIds.includes(raw.championId)) raw.usedIds.unshift(raw.championId);
+        if (!raw.usedIds.includes(raw.challengerId)) raw.usedIds.push(raw.challengerId);
+        return raw;
+      }
     }
-  } catch(e) {}
+  } catch {}
+
   return null;
 }
 
-function createNewState(poolSize = null) {
-  let ids = CHARACTERS.map(c => c.id);
-  
-  if (poolSize && poolSize > 0 && poolSize < ids.length) {
-    ids = ids.sort(() => Math.random() - 0.5).slice(0, poolSize);
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
-  
-  const championId = ids[Math.floor(Math.random()*ids.length)];
-  const usedIds = [championId];
-  const challengerId = pickUnused(usedIds, ids);
+  return copy;
+}
+
+function pickUnused(usedIds, poolIds = null) {
+  const pool = poolIds || CHARACTERS.map((c) => c.id);
+  const available = pool.filter((id) => !usedIds.includes(id));
+  if (!available.length) return null;
+  return available[Math.floor(Math.random() * available.length)];
+}
+
+function createNewState(poolSize = null) {
+  const ids = Array.isArray(CHARACTERS) ? CHARACTERS.map((c) => c.id) : [];
+
+  let selectedIds = [...ids];
+
+  if (poolSize && poolSize > 0 && poolSize < selectedIds.length) {
+    selectedIds = shuffle(selectedIds).slice(0, poolSize);
+  }
+
+  const championId = selectedIds.length ? selectedIds[Math.floor(Math.random() * selectedIds.length)] : null;
+  const usedIds = championId ? [championId] : [];
+  const challengerId = championId ? pickUnused(usedIds, selectedIds) : null;
+
   if (challengerId) usedIds.push(challengerId);
-  
+
   return {
     combat: 1,
     streak: 0,
@@ -144,44 +156,69 @@ function createNewState(poolSize = null) {
     championId,
     challengerId,
     usedIds,
-    poolIds: ids,
+    poolIds: selectedIds,
     history: [],
-    lastSnapshot: null
+    lastSnapshot: null,
   };
 }
 
-function pickUnused(usedIds, poolIds = null) {
-  const pool = poolIds || CHARACTERS.map(c => c.id);
-  const available = pool.filter(id => !usedIds.includes(id));
-  if (!available.length) return null;
-  return available[Math.floor(Math.random()*available.length)];
+function getChar(id) {
+  return Array.isArray(CHARACTERS) ? CHARACTERS.find((c) => c.id === id) : null;
 }
 
-function getChar(id) { return CHARACTERS.find(c => c.id === id); }
-
 function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+  return String(s).replace(/[&<>"']/g, (m) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  }[m]));
+}
+
+function renderCard(prefix, character) {
+  const nameEl = $(prefix + "Name");
+  const universeEl = $(prefix + "Universe");
+  const mediaEl = $(prefix + "Media");
+  const portraitEl = $(prefix + "Portrait");
+
+  if (!character || !nameEl || !universeEl || !mediaEl || !portraitEl) return;
+
+  nameEl.textContent = character.name || "—";
+  universeEl.textContent = character.universe || "—";
+  mediaEl.textContent = character.media || "—";
+
+  portraitEl.dataset.characterId = String(character.id || "");
+  loadPortrait(character, portraitEl);
 }
 
 function getBestRecordFromHistory() {
-  let best = 0, holder = "";
-  let current = 0, previousWinner = null;
-  for (const h of (Array.isArray(state.history) ? state.history : [])) {
+  let best = 0;
+  let holder = "";
+  let current = 0;
+  let previousWinner = null;
+
+  for (const h of Array.isArray(state.history) ? state.history : []) {
     const winner = h && h.winner ? String(h.winner) : "";
     if (winner && winner === previousWinner) current += 1;
     else current = winner ? 1 : 0;
+
     if (current > best) {
       best = current;
       holder = winner;
     }
+
     previousWinner = winner || null;
   }
-  return {best, holder};
+
+  return { best, holder };
 }
 
 function syncBestRecord() {
+  if (!state) return;
   const derived = getBestRecordFromHistory();
   const storedBest = Number(state.bestRecord || 0);
+
   if (derived.best > storedBest) {
     state.bestRecord = derived.best;
     state.bestRecordHolder = derived.holder;
@@ -191,6 +228,8 @@ function syncBestRecord() {
 }
 
 function updateStats() {
+  if (!state) return;
+
   syncBestRecord();
 
   const setText = (id, value) => {
@@ -198,21 +237,20 @@ function updateStats() {
     if (el) el.textContent = String(value);
   };
 
+  const poolSize = state.poolIds && state.poolIds.length ? state.poolIds.length : CHARACTERS.length;
+  const progress = poolSize ? Math.min(100, Math.round((state.usedIds.length / poolSize) * 100)) : 0;
+
   setText("combatNumber", state.combat);
   setText("streak", state.streak);
   setText("bestRecord", `${state.bestRecord} ${state.bestRecord === 1 ? "VICTOIRE" : "VICTOIRES"}`);
   setText("bestRecordHolderInline", state.bestRecordHolder || "—");
 
-  const pool = state.poolIds || CHARACTERS.map(c => c.id);
   setText("used", state.usedIds.length);
   setText("played", state.history.length);
-  setText("pool", pool.length);
-  setText("remaining", Math.max(0, pool.length - state.usedIds.length));
-
-  const progress = pool.length
-    ? Math.min(100, Math.round((state.usedIds.length / pool.length) * 100))
-    : 0;
+  setText("pool", poolSize);
+  setText("remaining", Math.max(0, poolSize - state.usedIds.length));
   setText("progressPercent", `${progress}%`);
+
   const bar = $("progressBar");
   if (bar) bar.style.width = `${progress}%`;
 
@@ -221,8 +259,10 @@ function updateStats() {
 }
 
 async function loadPortrait(character, el) {
+  if (!character || !el) return;
+
   const characterId = String(character.id || "");
-  const cacheKey = "ccimg-src-v36:" + characterId;
+  const cacheKey = `ccimg-src-v36:${characterId}`;
 
   const existingImg = el.querySelector("img");
   if (existingImg && existingImg.dataset.characterId === characterId) return;
@@ -233,9 +273,11 @@ async function loadPortrait(character, el) {
 
   const raw = String(character.name || "").trim();
   const id = characterId;
+
   const stripAccents = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const noApostrophe = (s) => s.replace(/[\'']/g, "");
   const clean = (s) => noApostrophe(stripAccents(s));
+
   const variants = [
     raw,
     clean(raw),
@@ -244,29 +286,27 @@ async function loadPortrait(character, el) {
     raw.replace(/\s+/g, "_"),
     clean(raw).replace(/\s+/g, "_"),
     raw.replace(/[^A-Za-zÀ-ÿ0-9_-]+/g, "_"),
-    clean(raw).replace(/[^A-Za-z0-9_-]+/g, "_")
+    clean(raw).replace(/[^A-Za-z0-9_-]+/g, "_"),
   ];
-  const names = [...new Set(variants.map(v => v.replace(/^_+|_+$/g, "")).filter(Boolean))];
+
+  const names = [...new Set(variants.map((v) => v.replace(/^_+|_+$/g, "")).filter(Boolean))];
   const candidates = [];
+
   if (id) {
-    for (const ext of [".jpg", ".jpeg", ".JPG", ".JPEG"]) candidates.push(`images/${id}${ext}`);
+    for (const ext of [".jpg", ".jpeg", ".png"]) {
+      candidates.push(`images/${id}${ext}`);
+    }
   }
+
   for (const name of names) {
-    for (const ext of [".jpg", ".jpeg", ".JPG", ".JPEG"]) candidates.push(`images/${id}_${name}${ext}`);
-  }
-  for (const name of names) {
-    for (const ext of [".jpg", ".jpeg", ".JPG", ".JPEG"]) candidates.push(`images/${name}${ext}`);
-  }
-  for (const name of names) {
-    const lower = name.toLowerCase();
-    for (const ext of [".jpg", ".jpeg", ".JPG", ".JPEG"]) candidates.push(`images/${id}_${lower}${ext}`);
+    for (const ext of [".jpg", ".jpeg", ".png"]) {
+      candidates.push(`images/${id}_${name}${ext}`);
+      candidates.push(`images/${name}${ext}`);
+    }
   }
 
   const cached = localStorage.getItem(cacheKey);
-  const uniqueCandidates = [...new Set([
-    ...(cached ? [cached] : []),
-    ...candidates
-  ])];
+  const uniqueCandidates = [...new Set([...(cached ? [cached] : []), ...candidates])];
 
   const tryCandidate = (index) => {
     if (index >= uniqueCandidates.length) {
@@ -285,7 +325,7 @@ async function loadPortrait(character, el) {
     img.onload = async () => {
       try {
         if (img.decode) await img.decode();
-      } catch (_) {}
+      } catch {}
 
       if (el.dataset.characterId !== characterId) return;
 
@@ -308,70 +348,72 @@ async function loadPortrait(character, el) {
   tryCandidate(0);
 }
 
-function setImage(el, src, character, onError, source = "") {
-  el.className = "portrait";
-  el.innerHTML = "";
-  const img = document.createElement("img");
-  img.alt = character.name;
-  img.loading = "eager";
-  img.decoding = "async";
-  img.referrerPolicy = "no-referrer";
-  img.src = src;
-  img.title = `${character.name} — visuel externe. Droits © à leurs créateurs / ayants droit. Source : ${source}`;
-  img.onerror = () => {
-    localStorage.removeItem("ccimg-v35:" + character.id);
-    if (onError) onError();
-    else el.innerHTML = "<span>Visuel indisponible</span>";
-  };
-  el.appendChild(img);
+function flashWinner(cardId) {
+  const el = $(cardId);
+  if (!el) return;
+  el.classList.remove("winner-flash");
+  void el.offsetWidth;
+  el.classList.add("winner-flash");
+  setTimeout(() => el.classList.remove("winner-flash"), 500);
 }
 
-function renderCard(prefix, character) {
-  $(prefix+"Name").textContent = character.name;
-  $(prefix+"Universe").textContent = character.universe;
-  $(prefix+"Media").textContent = character.media;
-  const p = $(prefix+"Portrait");
-  p.dataset.characterId = character.id;
-  loadPortrait(character, p);
+function toast(message) {
+  const el = $("toast");
+  if (!el) return;
+
+  el.textContent = message;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 1800);
 }
 
 function render() {
+  if (!state) return;
+
   const champ = getChar(state.championId);
   const challenger = state.challengerId ? getChar(state.challengerId) : null;
-  
+
   if (!champ) return;
-  
+
   renderCard("champion", champ);
+
   if (challenger) {
     renderCard("challenger", challenger);
-    $("challengerCard").style.display = "article";
+    const card = $("challengerCard");
+    if (card) card.style.display = "block";
   } else {
-    $("challengerCard").style.display = "none";
+    const card = $("challengerCard");
+    if (card) card.style.display = "none";
   }
-  
-  $("championStreak").textContent = state.streak;
+
+  const championStreak = $("championStreak");
+  if (championStreak) championStreak.textContent = state.streak;
+
   updateStats();
 }
 
 function choose(winnerId) {
+  if (!state) return;
+
   const champ = getChar(state.championId);
   const challenger = state.challengerId ? getChar(state.challengerId) : null;
   const winner = getChar(winnerId);
-  
+
   if (!champ || !challenger || !winner) return;
 
-  state.lastSnapshot = JSON.parse(JSON.stringify({
-    combat: state.combat,
-    streak: state.streak,
-    championId: state.championId,
-    challengerId: state.challengerId,
-    usedIds: state.usedIds,
-    poolIds: state.poolIds,
-    history: state.history,
-    bestRecord: state.bestRecord,
-    bestRecordHolder: state.bestRecordHolder,
-    characterStats: JSON.parse(JSON.stringify(characterStats))
-  }));
+  state.lastSnapshot = JSON.parse(
+    JSON.stringify({
+      combat: state.combat,
+      streak: state.streak,
+      championId: state.championId,
+      challengerId: state.challengerId,
+      usedIds: state.usedIds,
+      poolIds: state.poolIds,
+      history: state.history,
+      bestRecord: state.bestRecord,
+      bestRecordHolder: state.bestRecordHolder,
+      characterStats: JSON.parse(JSON.stringify(characterStats)),
+    })
+  );
 
   state.history.push({
     combat: state.combat,
@@ -379,7 +421,7 @@ function choose(winnerId) {
     challenger: challenger.name,
     universe: winner.universe,
     media: winner.media,
-    winner: winner.name
+    winner: winner.name,
   });
 
   const loser = winnerId === state.championId ? challenger : champ;
@@ -397,8 +439,8 @@ function choose(winnerId) {
     state.bestRecordHolder = winner.name;
   }
 
-  const pool = state.poolIds || CHARACTERS.map(c => c.id);
-  
+  const pool = state.poolIds && state.poolIds.length ? state.poolIds : CHARACTERS.map((c) => c.id);
+
   if (state.usedIds.length >= pool.length) {
     state.challengerId = null;
     save();
@@ -409,57 +451,227 @@ function choose(winnerId) {
 
   state.combat += 1;
   state.challengerId = pickUnused(state.usedIds, pool);
-  if (state.challengerId) state.usedIds.push(state.challengerId);
+
+  if (state.challengerId) {
+    state.usedIds.push(state.challengerId);
+  }
 
   syncBestRecord();
   save();
   render();
-  updateStats();
   flashWinner(winnerId === champ.id ? "championCard" : "challengerCard");
 }
 
 function renderHistory() {
   const box = $("historyList");
+  if (!box) return;
+
   const query = ($("historySearch")?.value || "").trim().toLowerCase();
-  if (!state.history.length) {
+
+  if (!state || !state.history.length) {
     box.innerHTML = '<div class="history-row"><span>—</span><span>Aucun combat enregistré.</span></div>';
     return;
   }
-  const filtered = [...state.history].reverse().filter(h => {
-    if (!query) return true;
-    return [h.championBefore, h.challenger, h.winner, h.universe, h.media].some(v => String(v).toLowerCase().includes(query));
-  });
+
+  const filtered = [...state.history]
+    .reverse()
+    .filter((h) => {
+      if (!query) return true;
+      return [h.championBefore, h.challenger, h.winner, h.universe, h.media].some((v) =>
+        String(v).toLowerCase().includes(query)
+      );
+    });
+
   if (!filtered.length) {
     box.innerHTML = '<div class="history-row"><span>—</span><span>Aucun résultat.</span></div>';
     return;
   }
-  box.innerHTML = filtered.map(h => `
-    <div class="history-row">
-      <div>#${h.combat}</div>
-      <div><span>Champion :</span> ${escapeHtml(h.championBefore)}</div>
-      <div><span>Challenger :</span> ${escapeHtml(h.challenger)}</div>
-      <div class="winner">🏆 ${escapeHtml(h.winner)}</div>
-    </div>
-  `).join("");
+
+  box.innerHTML = filtered
+    .map(
+      (h) => `
+      <div class="history-row">
+        <div>#${h.combat}</div>
+        <div><span>Champion :</span> ${escapeHtml(h.championBefore)}</div>
+        <div><span>Challenger :</span> ${escapeHtml(h.challenger)}</div>
+        <div class="winner">🏆 ${escapeHtml(h.winner)}</div>
+      </div>
+    `
+    )
+    .join("");
 }
 
 function exportCSV() {
-  const rows = [["Combat","Champion avant","Adversaire","Univers","Média","Gagnant"], ...state.history.map(h => [h.combat,h.championBefore,h.challenger,h.universe,h.media,h.winner])];
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(";")).join("\n");
-  const blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8"});
+  if (!state) return;
+
+  const rows = [
+    ["Combat", "Champion avant", "Adversaire", "Univers", "Média", "Gagnant"],
+    ...state.history.map((h) => [h.combat, h.championBefore, h.challenger, h.universe, h.media, h.winner]),
+  ];
+
+  const csv = rows
+    .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";"))
+    .join("\n");
+
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `character-choice-historique-${new Date().toISOString().slice(0,10)}.csv`;
+  a.download = `character-choice-historique-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
 }
 
-function toast(message) {
-  const el = $("toast");
-  el.textContent = message;
-  el.classList.add("show");
-  setTimeout(() => el.classList.remove("show"), 1800);
+function showHome() {
+  const arena = $("arena");
+  const dashboard = document.querySelector(".dashboard");
+  const arenaHead = document.querySelector(".arena-head");
+  const footerGrid = document.querySelector(".footer-grid");
+  const rightsPanel = document.querySelector(".rights-panel");
+
+  if (arena) arena.style.display = "none";
+  if (dashboard) dashboard.style.display = "none";
+  if (arenaHead) arenaHead.style.display = "none";
+  if (footerGrid) footerGrid.style.display = "none";
+  if (rightsPanel) rightsPanel.style.display = "none";
+
+  let homeContainer = $("homeContainer");
+  if (!homeContainer) {
+    homeContainer = document.createElement("div");
+    homeContainer.id = "homeContainer";
+    homeContainer.className = "home-container";
+    const main = document.querySelector("main");
+    if (main) main.insertBefore(homeContainer, main.firstChild || null);
+  }
+
+  homeContainer.style.display = "flex";
+
+  const maxPoolCount = Array.isArray(CHARACTERS) ? CHARACTERS.length : 0;
+
+  homeContainer.innerHTML = `
+    <div class="home-content">
+      <div class="home-header">
+        <h1 class="home-title">Ultimate Multiverse Battle</h1>
+        <p class="home-subtitle">Choisissez votre légendaire.</p>
+      </div>
+
+      <div class="home-options">
+        <div class="option-card full-pool">
+          <div class="option-icon">🌌</div>
+          <h2>Catalogue Complet</h2>
+          <p><strong id="fullPoolCount">${maxPoolCount}</strong> personnages</p>
+          <button class="option-btn full-pool-btn" type="button">Commencer</button>
+        </div>
+
+        <div class="option-card custom-pool">
+          <div class="option-icon">⚙️</div>
+          <h2>Sélection Personnalisée</h2>
+          <p>Choisissez entre 10 et <strong id="maxPoolCount">${maxPoolCount}</strong></p>
+          <div class="custom-input-group">
+            <label for="poolSizeInput">Nombre de personnages :</label>
+            <input
+              type="number"
+              id="poolSizeInput"
+              min="10"
+              max="${maxPoolCount}"
+              value="${Math.min(100, maxPoolCount)}"
+              placeholder="Entre 10 et ${maxPoolCount}"
+            >
+            <button class="option-btn custom-pool-btn" type="button">Commencer</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-footer">
+        <p class="home-info">⚔️ Affrontez des centaines de personnages issus des films, séries, jeux et mangas.</p>
+      </div>
+    </div>
+  `;
+
+  attachHomeListeners();
 }
+
+function hideHome() {
+  const homeContainer = $("homeContainer");
+  if (homeContainer) homeContainer.style.display = "none";
+
+  const arena = $("arena");
+  const dashboard = document.querySelector(".dashboard");
+  const arenaHead = document.querySelector(".arena-head");
+  const footerGrid = document.querySelector(".footer-grid");
+  const rightsPanel = document.querySelector(".rights-panel");
+
+  if (arena) arena.style.display = "grid";
+  if (dashboard) dashboard.style.display = "flex";
+  if (arenaHead) arenaHead.style.display = "flex";
+  if (footerGrid) footerGrid.style.display = "grid";
+  if (rightsPanel) rightsPanel.style.display = "block";
+}
+
+function attachHomeListeners() {
+  const fullPoolBtn = document.querySelector(".full-pool-btn");
+  const customPoolBtn = document.querySelector(".custom-pool-btn");
+  const poolSizeInput = $("poolSizeInput");
+
+  if (fullPoolBtn) {
+    fullPoolBtn.style.pointerEvents = "auto";
+    fullPoolBtn.disabled = false;
+    fullPoolBtn.onclick = null;
+    fullPoolBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      startGame(null);
+    });
+  }
+
+  if (customPoolBtn) {
+    customPoolBtn.style.pointerEvents = "auto";
+    customPoolBtn.disabled = false;
+    customPoolBtn.onclick = null;
+    customPoolBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      startGameCustom();
+    });
+  }
+
+  if (poolSizeInput) {
+    poolSizeInput.style.pointerEvents = "auto";
+    poolSizeInput.onkeypress = null;
+    poolSizeInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        startGameCustom();
+      }
+    });
+  }
+}
+
+function startGame(poolSize) {
+  state = createNewState(poolSize);
+  save();
+  render();
+  hideHome();
+}
+
+function startGameCustom() {
+  const input = $("poolSizeInput");
+  const maxSize = Array.isArray(CHARACTERS) ? CHARACTERS.length : 0;
+
+  if (!input) return;
+
+  const size = Math.floor(Number(input.value) || 0);
+
+  if (size < 10 || size > maxSize || !Number.isInteger(size)) {
+    alert(`⚠️ Veuillez entrer un nombre entre 10 et ${maxSize}.`);
+    input.focus();
+    return;
+  }
+
+  startGame(size);
+}
+
+// ==== Elo / stats sociales ====
 
 const K = 32;
 
@@ -489,7 +701,7 @@ async function revertCommunityStats(winnerId, loserId) {
       const wWins = Math.max(0, Number(wData.wins || 0));
       const wFights = Math.max(0, Number(wData.fights || (wData.wins || 0) + (wData.losses || 0) || 0));
       const wElo = Number(wData.elo || 1600);
-      
+
       const lLosses = Math.max(0, Number(lData.losses || 0));
       const lFights = Math.max(0, Number(lData.fights || (lData.wins || 0) + (lData.losses || 0) || 0));
       const lElo = Number(lData.elo || 1600);
@@ -503,163 +715,100 @@ async function revertCommunityStats(winnerId, loserId) {
       const newWElo = Math.max(400, Math.min(3200, wElo - winnerChange));
       const newLElo = Math.max(400, Math.min(3200, lElo - loserChange));
 
-      tx.set(winnerRef, { wins: newWWins, fights: newWFights, elo: newWElo, name: wData.name || undefined }, { merge: true });
-      tx.set(loserRef, { losses: newLLosses, fights: newLFights, elo: newLElo, name: lData.name || undefined }, { merge: true });
+      tx.set(
+        winnerRef,
+        { wins: newWWins, fights: newWFights, elo: newWElo, name: wData.name || undefined },
+        { merge: true }
+      );
+      tx.set(
+        loserRef,
+        { losses: newLLosses, fights: newLFights, elo: newLElo, name: lData.name || undefined },
+        { merge: true }
+      );
     });
   } catch (err) {
     console.error("revertCommunityStats transaction failed:", err);
   }
 }
 
-function flashWinner(cardId) {
-  const el = $(cardId);
-  el.classList.remove("winner-flash");
-  void el.offsetWidth;
-  el.classList.add("winner-flash");
-  setTimeout(() => el.classList.remove("winner-flash"), 500);
-}
+async function syncCommunityStats(winner, loser) {
+  if (!window.db || !window.firestoreReady) return Promise.resolve();
 
-// === PAGE D'ACCUEIL ===
-function showHome() {
-  const arena = $("arena");
-  const dashboard = document.querySelector(".dashboard");
-  const arenaHead = document.querySelector(".arena-head");
-  const footerGrid = document.querySelector(".footer-grid");
-  const rightsPanel = document.querySelector(".rights-panel");
-  
-  if (arena) arena.style.display = "none";
-  if (dashboard) dashboard.style.display = "none";
-  if (arenaHead) arenaHead.style.display = "none";
-  if (footerGrid) footerGrid.style.display = "none";
-  if (rightsPanel) rightsPanel.style.display = "none";
-  
-  let homeContainer = $("homeContainer");
-  if (!homeContainer) {
-    homeContainer = document.createElement("div");
-    homeContainer.id = "homeContainer";
-    homeContainer.className = "home-container";
-    const main = document.querySelector("main");
-    if (main) main.insertBefore(homeContainer, arena);
-  }
-  
-  homeContainer.style.display = "flex";
-  homeContainer.innerHTML = `
-    <div class="home-content">
-      <div class="home-header">
-        <h1 class="home-title">Ultimate Multiverse Battle</h1>
-        <p class="home-subtitle">Choisissez votre légendaire.</p>
-      </div>
-      
-      <div class="home-options">
-        <div class="option-card full-pool">
-          <div class="option-icon">🌌</div>
-          <h2>Catalogue Complet</h2>
-          <p><strong id="fullPoolCount">645</strong> personnages</p>
-          <button class="option-btn full-pool-btn" type="button">Commencer</button>
-        </div>
-        
-        <div class="option-card custom-pool">
-          <div class="option-icon">⚙️</div>
-          <h2>Sélection Personnalisée</h2>
-          <p>Choisissez entre 10 et <strong id="maxPoolCount">645</strong></p>
-          <div class="custom-input-group">
-            <label for="poolSizeInput">Nombre de personnages :</label>
-            <input 
-              type="number" 
-              id="poolSizeInput" 
-              min="10" 
-              max="645" 
-              value="100"
-              placeholder="Entre 10 et 645"
-            >
-            <button class="option-btn custom-pool-btn" type="button">Commencer</button>
-          </div>
-        </div>
-      </div>
-      
-      <div class="home-footer">
-        <p class="home-info">⚔️ Affrontez des centaines de personnages issus des films, séries, jeux et mangas.</p>
-      </div>
-    </div>
-  `;
+  const db = window.db;
 
-  attachHomeListeners();
-}
+  try {
+    const winnerDoc = await db.collection("communityCharacterStats").doc(String(winner.id)).get();
+    const loserDoc = await db.collection("communityCharacterStats").doc(String(loser.id)).get();
 
-function attachHomeListeners() {
-  const fullPoolBtn = document.querySelector(".full-pool-btn");
-  const customPoolBtn = document.querySelector(".custom-pool-btn");
-  const poolSizeInput = $("poolSizeInput");
+    const winnerElo = (winnerDoc.exists ? winnerDoc.data().elo : 1600) || 1600;
+    const loserElo = (loserDoc.exists ? loserDoc.data().elo : 1600) || 1600;
 
-  if (fullPoolBtn) {
-    fullPoolBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      startGame(null);
-    });
-  }
+    const { winnerChange, loserChange } = calculateEloChange(winnerElo, loserElo);
+    const newWinnerElo = Math.max(400, Math.min(3200, winnerElo + winnerChange));
+    const newLoserElo = Math.max(400, Math.min(3200, loserElo + loserChange));
 
-  if (customPoolBtn) {
-    customPoolBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      startGameCustom();
-    });
-  }
+    const batch = db.batch();
 
-  if (poolSizeInput) {
-    poolSizeInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        startGameCustom();
-      }
-    });
+    const winnerRef = db.collection("communityCharacterStats").doc(String(winner.id));
+    const loserRef = db.collection("communityCharacterStats").doc(String(loser.id));
+
+    batch.set(
+      winnerRef,
+      {
+        id: String(winner.id),
+        name: winner.name,
+        wins: firebase.firestore.FieldValue.increment(1),
+        losses: firebase.firestore.FieldValue.increment(0),
+        fights: firebase.firestore.FieldValue.increment(1),
+        elo: newWinnerElo,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    batch.set(
+      loserRef,
+      {
+        id: String(loser.id),
+        name: loser.name,
+        wins: firebase.firestore.FieldValue.increment(0),
+        losses: firebase.firestore.FieldValue.increment(1),
+        fights: firebase.firestore.FieldValue.increment(1),
+        elo: newLoserElo,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    return batch.commit().catch(() => {});
+  } catch (err) {
+    console.error("Erreur syncCommunityStats :", err);
   }
 }
 
-function hideHome() {
-  const homeContainer = $("homeContainer");
-  if (homeContainer) homeContainer.style.display = "none";
-  
-  const arena = $("arena");
-  const dashboard = document.querySelector(".dashboard");
-  const arenaHead = document.querySelector(".arena-head");
-  const footerGrid = document.querySelector(".footer-grid");
-  const rightsPanel = document.querySelector(".rights-panel");
-  
-  if (arena) arena.style.display = "grid";
-  if (dashboard) dashboard.style.display = "flex";
-  if (arenaHead) arenaHead.style.display = "flex";
-  if (footerGrid) footerGrid.style.display = "grid";
-  if (rightsPanel) rightsPanel.style.display = "block";
+function updateCharacterStats(winner, loser) {
+  if (!winner || !loser) return;
+
+  const ensure = (character) => {
+    const id = String(character.id);
+    if (!characterStats[id] || typeof characterStats[id] !== "object") {
+      characterStats[id] = { name: character.name, wins: 0, losses: 0 };
+    }
+
+    characterStats[id].name = character.name;
+    characterStats[id].wins = Math.max(0, Number(characterStats[id].wins) || 0);
+    characterStats[id].losses = Math.max(0, Number(characterStats[id].losses) || 0);
+    return characterStats[id];
+  };
+
+  ensure(winner).wins += 1;
+  ensure(loser).losses += 1;
+  saveCharacterStats();
+
+  syncCommunityStats(winner, loser);
 }
 
-function startGame(poolSize) {
-  state = createNewState(poolSize);
-  save();
-  render();
-  hideHome();
-}
-
-function startGameCustom() {
-  const input = $("poolSizeInput");
-  const size = Math.floor(Number(input.value) || 0);
-  const maxSize = CHARACTERS.length;
-  
-  if (size < 10 || size > maxSize || !Number.isInteger(size)) {
-    alert(`⚠️ Veuillez entrer un nombre entre 10 et ${maxSize}.`);
-    input.focus();
-    return;
-  }
-  
-  startGame(size);
-}
-
-// === INITIALISATION ===
-document.addEventListener("DOMContentLoaded", () => {
-  state = loadState();
-
-  // Attacher les event listeners de l'arène
+function initializeArenaEvents() {
   const chooseChampion = $("chooseChampion");
   const chooseChallenger = $("chooseChallenger");
   const championCard = $("championCard");
@@ -668,28 +817,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const resetBtn = $("resetBtn");
 
   if (chooseChampion) {
-    chooseChampion.addEventListener("click", e => { e.stopPropagation(); choose(state.championId); });
+    chooseChampion.onclick = null;
+    chooseChampion.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (state && state.championId) choose(state.championId);
+    });
   }
 
   if (chooseChallenger) {
-    chooseChallenger.addEventListener("click", e => { e.stopPropagation(); choose(state.challengerId); });
+    chooseChallenger.onclick = null;
+    chooseChallenger.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (state && state.challengerId) choose(state.challengerId);
+    });
   }
 
   if (championCard) {
-    championCard.addEventListener("click", () => choose(state.championId));
+    championCard.onclick = null;
+    championCard.addEventListener("click", () => {
+      if (state && state.championId) choose(state.championId);
+    });
   }
 
   if (challengerCard) {
-    challengerCard.addEventListener("click", () => choose(state.challengerId));
+    challengerCard.onclick = null;
+    challengerCard.addEventListener("click", () => {
+      if (state && state.challengerId) choose(state.challengerId);
+    });
   }
 
   if (undoBtn) {
+    undoBtn.onclick = null;
     undoBtn.addEventListener("click", async () => {
-      if (!state.lastSnapshot) return;
+      if (!state || !state.lastSnapshot) return;
 
-      const lastFight = Array.isArray(state.history) && state.history.length
-        ? state.history[state.history.length - 1]
-        : null;
+      const lastFight = Array.isArray(state.history) && state.history.length ? state.history[state.history.length - 1] : null;
 
       let winnerIdToRevert = null;
       let loserIdToRevert = null;
@@ -698,14 +862,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const winnerName = String(lastFight.winner);
         const championBeforeName = String(lastFight.championBefore || "");
         const challengerName = String(lastFight.challenger || "");
+        const loserName = winnerName === championBeforeName ? challengerName : championBeforeName;
 
-        const loserName = (winnerName === championBeforeName) ? challengerName : championBeforeName;
-
-        const chars = (typeof CHARACTERS !== "undefined" && Array.isArray(CHARACTERS)) ? CHARACTERS
-                      : (window.CHARACTERS && Array.isArray(window.CHARACTERS) ? window.CHARACTERS : []);
-
-        const winnerChar = chars.find(c => String(c.name) === winnerName);
-        const loserChar = chars.find(c => String(c.name) === loserName);
+        const chars = Array.isArray(CHARACTERS) ? CHARACTERS : [];
+        const winnerChar = chars.find((c) => String(c.name) === winnerName);
+        const loserChar = chars.find((c) => String(c.name) === loserName);
 
         if (winnerChar) winnerIdToRevert = String(winnerChar.id);
         if (loserChar) loserIdToRevert = String(loserChar.id);
@@ -729,10 +890,12 @@ document.addEventListener("DOMContentLoaded", () => {
       state.history = snap.history;
       state.bestRecord = snap.bestRecord;
       state.bestRecordHolder = snap.bestRecordHolder;
+
       if (snap.characterStats && typeof snap.characterStats === "object") {
         characterStats = snap.characterStats;
         saveCharacterStats();
       }
+
       state.lastSnapshot = null;
       save();
       render();
@@ -741,10 +904,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (resetBtn) {
+    resetBtn.onclick = null;
     resetBtn.addEventListener("click", () => {
       if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
-        const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
-        const holder = localStorage.getItem(BEST_HOLDER_KEY) || state.bestRecordHolder || "";
+        const best = Number(localStorage.getItem(BEST_KEY) || state?.bestRecord || 0);
+        const holder = localStorage.getItem(BEST_HOLDER_KEY) || state?.bestRecordHolder || "";
+
         state = {
           combat: 1,
           streak: 0,
@@ -753,103 +918,40 @@ document.addEventListener("DOMContentLoaded", () => {
           championId: null,
           challengerId: null,
           usedIds: [],
-          poolIds: [],
+          poolIds: Array.isArray(CHARACTERS) ? CHARACTERS.map((c) => c.id) : [],
           history: [],
-          lastSnapshot: null
+          lastSnapshot: null,
         };
+
         save();
         showHome();
         toast("🔄 Retour à la sélection du mode !");
       }
     });
   }
+}
 
-  // Vérifier si une partie est en cours
-  if (state && state.championId && state.usedIds && state.usedIds.length > 0) {
+document.addEventListener("DOMContentLoaded", () => {
+  initializeArenaEvents();
+
+  state = loadState();
+
+  if (state && state.championId && state.challengerId && Array.isArray(state.usedIds) && state.usedIds.length > 0) {
     hideHome();
     render();
   } else {
     showHome();
   }
+
+  save();
 });
 
-// Sauvegarde au départ/changement d'onglet
 window.addEventListener("pagehide", () => {
   if (state) save();
 });
-
 window.addEventListener("beforeunload", () => {
   if (state) save();
 });
-
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden" && state) save();
 });
-
-async function syncCommunityStats(winner, loser) {
-  if (!window.db || !window.firestoreReady) return Promise.resolve();
-
-  const db = window.db;
-
-  try {
-    const winnerDoc = await db.collection("communityCharacterStats").doc(String(winner.id)).get();
-    const loserDoc = await db.collection("communityCharacterStats").doc(String(loser.id)).get();
-
-    const winnerElo = (winnerDoc.exists ? winnerDoc.data().elo : 1600) || 1600;
-    const loserElo = (loserDoc.exists ? loserDoc.data().elo : 1600) || 1600;
-
-    const { winnerChange, loserChange } = calculateEloChange(winnerElo, loserElo);
-
-    const newWinnerElo = Math.max(400, Math.min(3200, winnerElo + winnerChange));
-    const newLoserElo = Math.max(400, Math.min(3200, loserElo + loserChange));
-
-    const batch = db.batch();
-
-    const winnerRef = db.collection("communityCharacterStats").doc(String(winner.id));
-    const loserRef = db.collection("communityCharacterStats").doc(String(loser.id));
-
-    batch.set(winnerRef, {
-      id: String(winner.id),
-      name: winner.name,
-      wins: firebase.firestore.FieldValue.increment(1),
-      losses: firebase.firestore.FieldValue.increment(0),
-      fights: firebase.firestore.FieldValue.increment(1),
-      elo: newWinnerElo,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    batch.set(loserRef, {
-      id: String(loser.id),
-      name: loser.name,
-      wins: firebase.firestore.FieldValue.increment(0),
-      losses: firebase.firestore.FieldValue.increment(1),
-      fights: firebase.firestore.FieldValue.increment(1),
-      elo: newLoserElo,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    return batch.commit().catch(() => {});
-  } catch (err) {
-    console.error("Erreur syncCommunityStats :", err);
-  }
-}
-
-function updateCharacterStats(winner, loser) {
-  if (!winner || !loser) return;
-
-  const ensure = (character) => {
-    const id = String(character.id);
-    if (!characterStats[id] || typeof characterStats[id] !== "object") {
-      characterStats[id] = { name: character.name, wins: 0, losses: 0 };
-    }
-    characterStats[id].name = character.name;
-    characterStats[id].wins = Math.max(0, Number(characterStats[id].wins) || 0);
-    characterStats[id].losses = Math.max(0, Number(characterStats[id].losses) || 0);
-    return characterStats[id];
-  };
-
-  ensure(winner).wins += 1;
-  ensure(loser).losses += 1;
-  saveCharacterStats();
-  syncCommunityStats(winner, loser);
-}
