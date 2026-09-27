@@ -135,19 +135,23 @@ function pickUnused(usedIds, poolIds = null) {
 }
 
 function createNewState(poolSize = null) {
-  const ids = Array.isArray(CHARACTERS) ? CHARACTERS.map((c) => c.id) : [];
+  const allIds = CHARACTERS.map((character) => character.id);
 
-  let selectedIds = [...ids];
+  let poolIds = [...allIds];
 
-  if (poolSize && poolSize > 0 && poolSize < selectedIds.length) {
-    selectedIds = shuffle(selectedIds).slice(0, poolSize);
+  if (poolSize !== null && poolSize < poolIds.length) {
+    poolIds = shuffle(poolIds).slice(0, poolSize);
   }
 
-  const championId = selectedIds.length ? selectedIds[Math.floor(Math.random() * selectedIds.length)] : null;
-  const usedIds = championId ? [championId] : [];
-  const challengerId = championId ? pickUnused(usedIds, selectedIds) : null;
+  const championId =
+    poolIds[Math.floor(Math.random() * poolIds.length)];
 
-  if (challengerId) usedIds.push(challengerId);
+  const usedIds = [championId];
+  const challengerId = pickUnused(usedIds, poolIds);
+
+  if (challengerId) {
+    usedIds.push(challengerId);
+  }
 
   return {
     combat: 1,
@@ -157,9 +161,9 @@ function createNewState(poolSize = null) {
     championId,
     challengerId,
     usedIds,
-    poolIds: selectedIds,
+    poolIds,
     history: [],
-    lastSnapshot: null,
+    lastSnapshot: null
   };
 }
 
@@ -657,13 +661,13 @@ function startGame(poolSize) {
 
 function startGameCustom() {
   const input = $("poolSizeInput");
-  const maxSize = Array.isArray(CHARACTERS) ? CHARACTERS.length : 0;
 
   if (!input) return;
 
-  const size = Math.floor(Number(input.value) || 0);
+  const size = Number(input.value);
+  const maxSize = Array.isArray(CHARACTERS) ? CHARACTERS.length : 0;
 
-  if (size < 10 || size > maxSize || !Number.isInteger(size)) {
+  if (!Number.isInteger(size) || size < 10 || size > maxSize) {
     alert(`⚠️ Veuillez entrer un nombre entre 10 et ${maxSize}.`);
     input.focus();
     return;
