@@ -5,7 +5,7 @@ const BEST_HOLDER_KEY = "characterChoiceV35BestHolder";
 const CHARACTER_STATS_KEY = "characterChoiceV35CharacterStats";
 
 const $ = id => document.getElementById(id);
-let state; // Déclaration sans initialisation
+let state;
 
 function getImageCandidates(character) {
   const rawName = String(character?.name || "").trim();
@@ -555,7 +555,7 @@ function showHome() {
           <div class="option-icon">🌌</div>
           <h2>Catalogue Complet</h2>
           <p><strong id="fullPoolCount">645</strong> personnages</p>
-          <button class="option-btn" id="fullPoolBtn">Commencer</button>
+          <button class="option-btn full-pool-btn">Commencer</button>
         </div>
         
         <div class="option-card custom-pool">
@@ -572,7 +572,7 @@ function showHome() {
               value="100"
               placeholder="Entre 10 et 645"
             >
-            <button class="option-btn" id="customPoolBtn">Commencer</button>
+            <button class="option-btn custom-pool-btn">Commencer</button>
           </div>
         </div>
       </div>
@@ -582,27 +582,6 @@ function showHome() {
       </div>
     </div>
   `;
-
-  // Attacher les event listeners
-  setTimeout(() => {
-    const fullPoolBtn = $("fullPoolBtn");
-    const customPoolBtn = $("customPoolBtn");
-    const poolSizeInput = $("poolSizeInput");
-
-    if (fullPoolBtn) {
-      fullPoolBtn.addEventListener("click", () => startGame(null));
-    }
-
-    if (customPoolBtn) {
-      customPoolBtn.addEventListener("click", startGameCustom);
-    }
-
-    if (poolSizeInput) {
-      poolSizeInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") startGameCustom();
-      });
-    }
-  }, 0);
 }
 
 function hideHome() {
@@ -643,95 +622,130 @@ function startGameCustom() {
   startGame(size);
 }
 
+// === DÉLÉGATION D'ÉVÉNEMENTS GLOBALE ===
+document.addEventListener("click", (e) => {
+  const homeContainer = $("homeContainer");
+  
+  // Si on est sur la page d'accueil
+  if (homeContainer && homeContainer.style.display !== "none") {
+    if (e.target.classList.contains("full-pool-btn")) {
+      startGame(null);
+    }
+    if (e.target.classList.contains("custom-pool-btn")) {
+      startGameCustom();
+    }
+  }
+});
+
 // === INITIALISATION ===
 document.addEventListener("DOMContentLoaded", () => {
   // Charger l'état APRÈS le DOM
   state = loadState();
 
-  const maxPoolCount = CHARACTERS.length;
-  
   // Attacher les event listeners qui dépendent du DOM
-  $("chooseChampion").addEventListener("click", e => { e.stopPropagation(); choose(state.championId); });
-  $("chooseChallenger").addEventListener("click", e => { e.stopPropagation(); choose(state.challengerId); });
-  $("championCard").addEventListener("click", () => choose(state.championId));
-  $("challengerCard").addEventListener("click", () => choose(state.challengerId));
+  const chooseChampion = $("chooseChampion");
+  const chooseChallenger = $("chooseChallenger");
+  const championCard = $("championCard");
+  const challengerCard = $("challengerCard");
+  const undoBtn = $("undoBtn");
+  const resetBtn = $("resetBtn");
 
-  $("undoBtn").addEventListener("click", async () => {
-    if (!state.lastSnapshot) return;
+  if (chooseChampion) {
+    chooseChampion.addEventListener("click", e => { e.stopPropagation(); choose(state.championId); });
+  }
 
-    const lastFight = Array.isArray(state.history) && state.history.length
-      ? state.history[state.history.length - 1]
-      : null;
+  if (chooseChallenger) {
+    chooseChallenger.addEventListener("click", e => { e.stopPropagation(); choose(state.challengerId); });
+  }
 
-    let winnerIdToRevert = null;
-    let loserIdToRevert = null;
+  if (championCard) {
+    championCard.addEventListener("click", () => choose(state.championId));
+  }
 
-    if (lastFight && lastFight.winner) {
-      const winnerName = String(lastFight.winner);
-      const championBeforeName = String(lastFight.championBefore || "");
-      const challengerName = String(lastFight.challenger || "");
+  if (challengerCard) {
+    challengerCard.addEventListener("click", () => choose(state.challengerId));
+  }
 
-      const loserName = (winnerName === championBeforeName) ? challengerName : championBeforeName;
+  if (undoBtn) {
+    undoBtn.addEventListener("click", async () => {
+      if (!state.lastSnapshot) return;
 
-      const chars = (typeof CHARACTERS !== "undefined" && Array.isArray(CHARACTERS)) ? CHARACTERS
-                    : (window.CHARACTERS && Array.isArray(window.CHARACTERS) ? window.CHARACTERS : []);
+      const lastFight = Array.isArray(state.history) && state.history.length
+        ? state.history[state.history.length - 1]
+        : null;
 
-      const winnerChar = chars.find(c => String(c.name) === winnerName);
-      const loserChar = chars.find(c => String(c.name) === loserName);
+      let winnerIdToRevert = null;
+      let loserIdToRevert = null;
 
-      if (winnerChar) winnerIdToRevert = String(winnerChar.id);
-      if (loserChar) loserIdToRevert = String(loserChar.id);
-    }
+      if (lastFight && lastFight.winner) {
+        const winnerName = String(lastFight.winner);
+        const championBeforeName = String(lastFight.championBefore || "");
+        const challengerName = String(lastFight.challenger || "");
 
-    if (winnerIdToRevert && loserIdToRevert) {
-      try {
-        await revertCommunityStats(winnerIdToRevert, loserIdToRevert);
-      } catch (e) {
-        console.error("Erreur lors de la réversion des stats communautaires :", e);
+        const loserName = (winnerName === championBeforeName) ? challengerName : championBeforeName;
+
+        const chars = (typeof CHARACTERS !== "undefined" && Array.isArray(CHARACTERS)) ? CHARACTERS
+                      : (window.CHARACTERS && Array.isArray(window.CHARACTERS) ? window.CHARACTERS : []);
+
+        const winnerChar = chars.find(c => String(c.name) === winnerName);
+        const loserChar = chars.find(c => String(c.name) === loserName);
+
+        if (winnerChar) winnerIdToRevert = String(winnerChar.id);
+        if (loserChar) loserIdToRevert = String(loserChar.id);
       }
-    }
 
-    const snap = state.lastSnapshot;
-    state.combat = snap.combat;
-    state.streak = snap.streak;
-    state.championId = snap.championId;
-    state.challengerId = snap.challengerId;
-    state.usedIds = snap.usedIds;
-    state.poolIds = snap.poolIds;
-    state.history = snap.history;
-    state.bestRecord = snap.bestRecord;
-    state.bestRecordHolder = snap.bestRecordHolder;
-    if (snap.characterStats && typeof snap.characterStats === "object") {
-      characterStats = snap.characterStats;
-      saveCharacterStats();
-    }
-    state.lastSnapshot = null;
-    save();
-    render();
-    toast("↩️ Dernier combat annulé");
-  });
+      if (winnerIdToRevert && loserIdToRevert) {
+        try {
+          await revertCommunityStats(winnerIdToRevert, loserIdToRevert);
+        } catch (e) {
+          console.error("Erreur lors de la réversion des stats communautaires :", e);
+        }
+      }
 
-  $("resetBtn").addEventListener("click", () => {
-    if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
-      const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
-      const holder = localStorage.getItem(BEST_HOLDER_KEY) || state.bestRecordHolder || "";
-      state = {
-        combat: 1,
-        streak: 0,
-        bestRecord: best,
-        bestRecordHolder: holder,
-        championId: null,
-        challengerId: null,
-        usedIds: [],
-        poolIds: [],
-        history: [],
-        lastSnapshot: null
-      };
+      const snap = state.lastSnapshot;
+      state.combat = snap.combat;
+      state.streak = snap.streak;
+      state.championId = snap.championId;
+      state.challengerId = snap.challengerId;
+      state.usedIds = snap.usedIds;
+      state.poolIds = snap.poolIds;
+      state.history = snap.history;
+      state.bestRecord = snap.bestRecord;
+      state.bestRecordHolder = snap.bestRecordHolder;
+      if (snap.characterStats && typeof snap.characterStats === "object") {
+        characterStats = snap.characterStats;
+        saveCharacterStats();
+      }
+      state.lastSnapshot = null;
       save();
-      showHome();
-      toast("🔄 Retour à la sélection du mode !");
-    }
-  });
+      render();
+      toast("↩️ Dernier combat annulé");
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
+        const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
+        const holder = localStorage.getItem(BEST_HOLDER_KEY) || state.bestRecordHolder || "";
+        state = {
+          combat: 1,
+          streak: 0,
+          bestRecord: best,
+          bestRecordHolder: holder,
+          championId: null,
+          challengerId: null,
+          usedIds: [],
+          poolIds: [],
+          history: [],
+          lastSnapshot: null
+        };
+        save();
+        showHome();
+        toast("🔄 Retour à la sélection du mode !");
+      }
+    });
+  }
 
   // Vérifier si une partie est en cours
   if (state && state.championId && state.usedIds && state.usedIds.length > 0) {
@@ -745,8 +759,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Sauvegarde au départ/changement d'onglet
-window.addEventListener("pagehide", save);
-window.addEventListener("beforeunload", save);
+window.addEventListener("pagehide", () => {
+  if (state) save();
+});
+
+window.addEventListener("beforeunload", () => {
+  if (state) save();
+});
+
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden" && state) save();
 });
