@@ -127,7 +127,8 @@ function shuffle(array) {
 }
 
 function pickUnused(usedIds, poolIds = null) {
-  const pool = poolIds || CHARACTERS.map((c) => c.id);
+  // Si poolIds n'est pas fourni, on utilise le pool de l'état actuel
+  const pool = poolIds || (state && state.poolIds ? state.poolIds : CHARACTERS.map((c) => c.id));
   const available = pool.filter((id) => !usedIds.includes(id));
   if (!available.length) return null;
   return available[Math.floor(Math.random() * available.length)];
