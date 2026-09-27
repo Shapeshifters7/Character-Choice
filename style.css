@@ -598,37 +598,34 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
   }
 }
 
-/* === FIX CLICS PAGE D'ACCUEIL === */
+/* ===== FIX CLICS PAGE D'ACCUEIL ===== */
+#homeContainer,
+#homeContainer *,
+.home-content,
+.home-options,
+.option-card,
+.option-btn,
+.custom-input-group,
+.custom-input-group *,
+button,
+a {
+  pointer-events: auto !important;
+}
+
 #homeContainer {
-  pointer-events: auto !important;
-  z-index: 100 !important;
+  position: relative !important;
+  z-index: 2000 !important;
 }
 
-.home-content {
-  pointer-events: auto !important;
-}
-
-.home-options {
-  pointer-events: auto !important;
-}
-
-.option-card {
-  pointer-events: auto !important;
+.home-content,
+.home-options,
+.option-card,
+.option-btn,
+.custom-input-group {
+  position: relative !important;
+  z-index: 2001 !important;
 }
 
 .option-btn {
-  pointer-events: auto !important;
-  cursor: pointer;
-}
-
-.custom-input-group {
-  pointer-events: auto !important;
-}
-
-.custom-input-group input {
-  pointer-events: auto !important;
-}
-
-.custom-input-group label {
-  pointer-events: auto !important;
+  cursor: pointer !important;
 }
