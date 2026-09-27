@@ -1344,11 +1344,11 @@ const CHARACTERS = [
     "wiki":"Fiona Frost"
   },
   {
-    "name":"Hachi Komatsu",
-    "universe":"Nana",
-    "media":"Manga / Anime",
-    "id":"c193",
-    "wiki":"Hachi Komatsu"
+    "name": "Sub-Zero",
+    "universe": "Mortal Kombat",
+    "media": "Jeux vidéo",
+    "id": "c193",
+    "wiki": "Sub-Zero (Mortal Kombat)"
   },
   {
     "name":"Nana Komatsu",
@@ -4514,5 +4514,12 @@ const CHARACTERS = [
   "media": "Films",
   "id": "c645",
   "wiki": "Lucy (film)"
+}
+{
+  "name": "Scorpion",
+  "universe": "Mortal Kombat",
+  "media": "Jeux vidéo",
+  "id": "c646",
+  "wiki": "Scorpion (Mortal Kombat)"
 }
 ];
