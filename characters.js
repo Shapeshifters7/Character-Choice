@@ -4521,5 +4521,12 @@ const CHARACTERS = [
   "media": "Jeux vidéo",
   "id": "c646",
   "wiki": "Scorpion (Mortal Kombat)"
+},
+{
+  "name": "Raiden",
+  "universe": "Mortal Kombat",
+  "media": "Jeux vidéo",
+  "id": "c647",
+  "wiki": "Raiden (Mortal Kombat)"
 }
 ];
