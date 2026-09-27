@@ -29,15 +29,11 @@ function getImageCandidates(character) {
   const slugs = [...new Set(variants.map(normalize).filter(Boolean))];
   const candidates = [];
 
-  // On essaie aussi les variantes avec la casse d'origine.
-  // Les fichiers images peuvent être nommés avec ou sans majuscules.
   const rawVariants = [...new Set(variants.map(v => v.trim()).filter(Boolean))];
   for (const name of rawVariants) {
     candidates.push(`images/${id}_${name}.jpg`);
     candidates.push(`images/${id}_${name}.jpeg`);
   }
-  // Variante entièrement en minuscules : c401_voldemort.jpg fonctionne
-  // même si le personnage s'appelle "Voldemort" dans characters.js.
   for (const slug of slugs) {
     candidates.push(`images/${id}_${slug}.jpg`);
     candidates.push(`images/${id}_${slug}.jpeg`);
@@ -50,7 +46,6 @@ function getImageCandidates(character) {
 function getImagePath(character) {
   return getImageCandidates(character)[0] || "";
 }
-
 
 function loadCharacterImage(img, character) {
   const candidates = getImageCandidates(character);
@@ -84,7 +79,6 @@ function loadCharacterImage(img, character) {
   tryNext();
 }
 
-
 function slug(text) {
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 }
@@ -117,26 +111,32 @@ function save() {
 function loadState() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-    if (raw && raw.championId && raw.challengerId && Array.isArray(raw.usedIds)) {
+    if (raw && raw.championId && Array.isArray(raw.usedIds) && Object.prototype.hasOwnProperty.call(raw, "challengerId")) {
       if (!Object.prototype.hasOwnProperty.call(raw, "lastSnapshot")) raw.lastSnapshot = null;
       if (!Array.isArray(raw.history)) raw.history = [];
       if (!Number.isFinite(Number(raw.bestRecord))) raw.bestRecord = 0;
       if (typeof raw.bestRecordHolder !== "string") raw.bestRecordHolder = "";
-      // Migration des anciennes parties : le challenger initial doit compter comme personnage vu.
       if (!raw.usedIds.includes(raw.championId)) raw.usedIds.unshift(raw.championId);
-      if (!raw.usedIds.includes(raw.challengerId)) raw.usedIds.push(raw.challengerId);
+      if (raw.challengerId && !raw.usedIds.includes(raw.challengerId)) raw.usedIds.push(raw.challengerId);
       return raw;
     }
   } catch(e) {}
   return createNewState();
 }
 
-function createNewState() {
-  const ids = CHARACTERS.map(c => c.id);
+function createNewState(poolSize = null) {
+  let ids = CHARACTERS.map(c => c.id);
+  
+  // Si un poolSize est spécifié, on mélange et on prend les N premiers
+  if (poolSize && poolSize > 0 && poolSize < ids.length) {
+    ids = ids.sort(() => Math.random() - 0.5).slice(0, poolSize);
+  }
+  
   const championId = ids[Math.floor(Math.random()*ids.length)];
   const usedIds = [championId];
-  const challengerId = pickUnused(usedIds);
+  const challengerId = pickUnused(usedIds, ids);
   if (challengerId) usedIds.push(challengerId);
+  
   return {
     combat: 1,
     streak: 0,
@@ -145,15 +145,17 @@ function createNewState() {
     championId,
     challengerId,
     usedIds,
+    poolIds: ids,
     history: [],
     lastSnapshot: null
   };
 }
 
-function pickUnused(usedIds) {
-  const available = CHARACTERS.filter(c => !usedIds.includes(c.id));
+function pickUnused(usedIds, poolIds = null) {
+  const pool = poolIds || CHARACTERS.map(c => c.id);
+  const available = pool.filter(id => !usedIds.includes(id));
   if (!available.length) return null;
-  return available[Math.floor(Math.random()*available.length)].id;
+  return available[Math.floor(Math.random()*available.length)];
 }
 
 function getChar(id) { return CHARACTERS.find(c => c.id === id); }
@@ -202,14 +204,14 @@ function updateStats() {
   setText("bestRecord", `${state.bestRecord} ${state.bestRecord === 1 ? "VICTOIRE" : "VICTOIRES"}`);
   setText("bestRecordHolderInline", state.bestRecordHolder || "—");
 
-  // Partie actuelle : toujours calculée directement depuis l'état courant.
+  const pool = state.poolIds || CHARACTERS.map(c => c.id);
   setText("used", state.usedIds.length);
   setText("played", state.history.length);
-  setText("pool", CHARACTERS.length);
-  setText("remaining", Math.max(0, CHARACTERS.length - state.usedIds.length));
+  setText("pool", pool.length);
+  setText("remaining", Math.max(0, pool.length - state.usedIds.length));
 
-  const progress = CHARACTERS.length
-    ? Math.min(100, Math.round((state.usedIds.length / CHARACTERS.length) * 100))
+  const progress = pool.length
+    ? Math.min(100, Math.round((state.usedIds.length / pool.length) * 100))
     : 0;
   setText("progressPercent", `${progress}%`);
   const bar = $("progressBar");
@@ -223,7 +225,6 @@ async function loadPortrait(character, el) {
   const characterId = String(character.id || "");
   const cacheKey = "ccimg-src-v36:" + characterId;
 
-  // Si le même personnage est déjà affiché, on ne recharge rien.
   const existingImg = el.querySelector("img");
   if (existingImg && existingImg.dataset.characterId === characterId) return;
 
@@ -283,8 +284,6 @@ async function loadPortrait(character, el) {
     img.referrerPolicy = "no-referrer";
 
     img.onload = async () => {
-      // On attend que le navigateur ait décodé l'image avant de l'insérer.
-      // Cela évite l'effet "image vide puis apparition".
       try {
         if (img.decode) await img.decode();
       } catch (_) {}
@@ -339,18 +338,27 @@ function renderCard(prefix, character) {
 
 function render() {
   const champ = getChar(state.championId);
-  const challenger = getChar(state.challengerId);
-  if (!champ || !challenger) return;
+  const challenger = state.challengerId ? getChar(state.challengerId) : null;
+  
+  if (!champ) return;
+  
   renderCard("champion", champ);
-  renderCard("challenger", challenger);
+  if (challenger) {
+    renderCard("challenger", challenger);
+    $("challengerCard").style.display = "article";
+  } else {
+    $("challengerCard").style.display = "none";
+  }
+  
   $("championStreak").textContent = state.streak;
   updateStats();
 }
 
 function choose(winnerId) {
   const champ = getChar(state.championId);
-  const challenger = getChar(state.challengerId);
+  const challenger = state.challengerId ? getChar(state.challengerId) : null;
   const winner = getChar(winnerId);
+  
   if (!champ || !challenger || !winner) return;
 
   state.lastSnapshot = JSON.parse(JSON.stringify({
@@ -359,6 +367,7 @@ function choose(winnerId) {
     championId: state.championId,
     challengerId: state.challengerId,
     usedIds: state.usedIds,
+    poolIds: state.poolIds,
     history: state.history,
     bestRecord: state.bestRecord,
     bestRecordHolder: state.bestRecordHolder,
@@ -389,7 +398,9 @@ function choose(winnerId) {
     state.bestRecordHolder = winner.name;
   }
 
-  if (state.usedIds.length >= CHARACTERS.length) {
+  const pool = state.poolIds || CHARACTERS.map(c => c.id);
+  
+  if (state.usedIds.length >= pool.length) {
     state.challengerId = null;
     save();
     render();
@@ -398,7 +409,7 @@ function choose(winnerId) {
   }
 
   state.combat += 1;
-  state.challengerId = pickUnused(state.usedIds);
+  state.challengerId = pickUnused(state.usedIds, pool);
   if (state.challengerId) state.usedIds.push(state.challengerId);
 
   syncBestRecord();
@@ -452,7 +463,7 @@ function toast(message) {
 }
 
 // Système Elo
-const K = 32; // Facteur Elo (32 = modéré, 16 = stable, 64 = volatil)
+const K = 32;
 
 function calculateEloChange(winnerElo, loserElo) {
   const expectedWinner = 1 / (1 + Math.pow(10, (loserElo - winnerElo) / 400));
@@ -464,8 +475,6 @@ function calculateEloChange(winnerElo, loserElo) {
   return { winnerChange, loserChange };
 }
 
-// Révocation / décrémentation des stats communautaires (dans Firestore).
-// Si Firestore n'est pas disponible, on ignore silencieusement.
 async function revertCommunityStats(winnerId, loserId) {
   if (!window.db || !window.firebase || !window.firebase.firestore) return Promise.resolve();
 
@@ -479,7 +488,6 @@ async function revertCommunityStats(winnerId, loserId) {
       const wData = wSnap.exists ? wSnap.data() : {};
       const lData = lSnap.exists ? lSnap.data() : {};
 
-      // Récupère les valeurs actuelles (ou 0 par défaut)
       const wWins = Math.max(0, Number(wData.wins || 0));
       const wFights = Math.max(0, Number(wData.fights || (wData.wins || 0) + (wData.losses || 0) || 0));
       const wElo = Number(wData.elo || 1600);
@@ -488,13 +496,11 @@ async function revertCommunityStats(winnerId, loserId) {
       const lFights = Math.max(0, Number(lData.fights || (lData.wins || 0) + (lData.losses || 0) || 0));
       const lElo = Number(lData.elo || 1600);
 
-      // Décrémente les compteurs en évitant les valeurs négatives
       const newWWins = Math.max(0, wWins - 1);
       const newWFights = Math.max(0, wFights - 1);
       const newLLosses = Math.max(0, lLosses - 1);
       const newLFights = Math.max(0, lFights - 1);
 
-      // Recalculer les Elos inversés
       const { winnerChange, loserChange } = calculateEloChange(wElo, lElo);
       const newWElo = Math.max(400, Math.min(3200, wElo - winnerChange));
       const newLElo = Math.max(400, Math.min(3200, lElo - loserChange));
@@ -503,34 +509,27 @@ async function revertCommunityStats(winnerId, loserId) {
       tx.set(loserRef, { losses: newLLosses, fights: newLFights, elo: newLElo, name: lData.name || undefined }, { merge: true });
     });
   } catch (err) {
-    // Ne pas bloquer l'UX : log et continuer. L'utilisateur garde ses stats locales restaurées.
     console.error("revertCommunityStats transaction failed:", err);
   }
 }
 
-// Remplacement de l'écouteur d'undo pour gérer aussi Firestore
 $("undoBtn").addEventListener("click", async () => {
   if (!state.lastSnapshot) return;
 
-  // Avant de restaurer localement, récupère le dernier combat (celui à annuler)
   const lastFight = Array.isArray(state.history) && state.history.length
     ? state.history[state.history.length - 1]
     : null;
 
-  // Tenter d'identifier les IDs winner/loser à partir des noms du dernier combat
   let winnerIdToRevert = null;
   let loserIdToRevert = null;
 
   if (lastFight && lastFight.winner) {
     const winnerName = String(lastFight.winner);
-    // Les champs sauvegardés dans history : championBefore (name), challenger (name).
     const championBeforeName = String(lastFight.championBefore || "");
     const challengerName = String(lastFight.challenger || "");
 
-    // Déduire le loser par comparaison des noms
     const loserName = (winnerName === championBeforeName) ? challengerName : championBeforeName;
 
-    // Trouver les personnages dans CHARACTERS par nom (approx. exact match)
     const chars = (typeof CHARACTERS !== "undefined" && Array.isArray(CHARACTERS)) ? CHARACTERS
                   : (window.CHARACTERS && Array.isArray(window.CHARACTERS) ? window.CHARACTERS : []);
 
@@ -541,23 +540,21 @@ $("undoBtn").addEventListener("click", async () => {
     if (loserChar) loserIdToRevert = String(loserChar.id);
   }
 
-  // Si on a trouvé des IDs, on essaie de décrémenter les compteurs cloud.
   if (winnerIdToRevert && loserIdToRevert) {
     try {
       await revertCommunityStats(winnerIdToRevert, loserIdToRevert);
     } catch (e) {
       console.error("Erreur lors de la réversion des stats communautaires :", e);
-      // On continue quand même à restaurer localement
     }
   }
 
-  // Restaurer l'état local depuis le snapshot (comportement existant)
   const snap = state.lastSnapshot;
   state.combat = snap.combat;
   state.streak = snap.streak;
   state.championId = snap.championId;
   state.challengerId = snap.challengerId;
   state.usedIds = snap.usedIds;
+  state.poolIds = snap.poolIds;
   state.history = snap.history;
   state.bestRecord = snap.bestRecord;
   state.bestRecordHolder = snap.bestRecordHolder;
@@ -583,6 +580,7 @@ $("chooseChampion").addEventListener("click", e => { e.stopPropagation(); choose
 $("chooseChallenger").addEventListener("click", e => { e.stopPropagation(); choose(state.challengerId); });
 $("championCard").addEventListener("click", () => choose(state.championId));
 $("challengerCard").addEventListener("click", () => choose(state.challengerId));
+
 $("resetBtn").addEventListener("click", () => {
   if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
     const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
@@ -594,17 +592,160 @@ $("resetBtn").addEventListener("click", () => {
   }
 });
 
-// Affiche immédiatement le premier combat au chargement de la page.
-render();
-// Persist l'état initial tout de suite pour éviter qu'un reload / changement d'onglet
-// (cas fréquent sur mobile) ne recrée un combat aléatoire différent.
-save();
-// Sauvegarde supplémentaire à la fermeture / mise en arrière-plan (utile sur mobile).
-window.addEventListener("pagehide", save);           // couvre navigation/fermeture sur mobile
-window.addEventListener("beforeunload", save);       // fallback navigateur
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") save();
+// === PAGE D'ACCUEIL ===
+function showHome() {
+  const arena = $("arena");
+  const dashboard = document.querySelector(".dashboard");
+  const arenaHead = document.querySelector(".arena-head");
+  const footerGrid = document.querySelector(".footer-grid");
+  const rightsPanel = document.querySelector(".rights-panel");
+  
+  if (arena) arena.style.display = "none";
+  if (dashboard) dashboard.style.display = "none";
+  if (arenaHead) arenaHead.style.display = "none";
+  if (footerGrid) footerGrid.style.display = "none";
+  if (rightsPanel) rightsPanel.style.display = "none";
+  
+  let homeContainer = $("homeContainer");
+  if (!homeContainer) {
+    homeContainer = document.createElement("div");
+    homeContainer.id = "homeContainer";
+    homeContainer.className = "home-container";
+    document.querySelector("main").insertBefore(homeContainer, arena);
+  }
+  
+  homeContainer.innerHTML = `
+    <div class="home-content">
+      <div class="home-header">
+        <h1 class="home-title">Ultimate Multiverse Battle</h1>
+        <p class="home-subtitle">Choisissez votre légendaire.</p>
+      </div>
+      
+      <div class="home-options">
+        <div class="option-card full-pool">
+          <div class="option-icon">🌌</div>
+          <h2>Catalogue Complet</h2>
+          <p><strong id="fullPoolCount">645</strong> personnages</p>
+          <button class="option-btn" onclick="startGame(null)">Commencer</button>
+        </div>
+        
+        <div class="option-card custom-pool">
+          <div class="option-icon">⚙️</div>
+          <h2>Sélection Personnalisée</h2>
+          <p>Choisissez entre 10 et <strong id="maxPoolCount">645</strong></p>
+          <div class="custom-input-group">
+            <label for="poolSizeInput">Nombre de personnages :</label>
+            <input 
+              type="number" 
+              id="poolSizeInput" 
+              min="10" 
+              max="645" 
+              value="100"
+              placeholder="Entre 10 et 645"
+            >
+            <button class="option-btn" onclick="startGameCustom()">Commencer</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="home-footer">
+        <p class="home-info">⚔️ Affrontez des centaines de personnages issus des films, séries, jeux et mangas.</p>
+      </div>
+    </div>
+  `;
+}
+
+function hideHome() {
+  const homeContainer = $("homeContainer");
+  if (homeContainer) homeContainer.style.display = "none";
+  
+  const arena = $("arena");
+  const dashboard = document.querySelector(".dashboard");
+  const arenaHead = document.querySelector(".arena-head");
+  const footerGrid = document.querySelector(".footer-grid");
+  const rightsPanel = document.querySelector(".rights-panel");
+  
+  if (arena) arena.style.display = "grid";
+  if (dashboard) dashboard.style.display = "flex";
+  if (arenaHead) arenaHead.style.display = "flex";
+  if (footerGrid) footerGrid.style.display = "grid";
+  if (rightsPanel) rightsPanel.style.display = "block";
+}
+
+window.startGame = function(poolSize) {
+  Object.assign(state, createNewState(poolSize));
+  save();
+  render();
+  hideHome();
+};
+
+window.startGameCustom = function() {
+  const input = $("poolSizeInput");
+  const size = Math.floor(Number(input.value) || 0);
+  const maxSize = CHARACTERS.length;
+  
+  if (size < 10 || size > maxSize || !Number.isInteger(size)) {
+    alert(`⚠️ Veuillez entrer un nombre entre 10 et ${maxSize}.`);
+    return;
+  }
+  
+  startGame(size);
+};
+
+// === INITIALISATION ===
+window.addEventListener("load", () => {
+  const maxPoolCount = CHARACTERS.length;
+  const fullPoolCount = $("fullPoolCount");
+  const maxPoolCountEl = $("maxPoolCount");
+  const poolSizeInput = $("poolSizeInput");
+  
+  if (fullPoolCount) fullPoolCount.textContent = maxPoolCount;
+  if (maxPoolCountEl) maxPoolCountEl.textContent = maxPoolCount;
+  
+  // Vérifier si une partie est en cours
+  if (state.championId && state.usedIds.length > 0) {
+    // Partie existante : afficher l'arène
+    hideHome();
+    render();
+  } else {
+    // Aucune partie : afficher la page d'accueil
+    showHome();
+  }
+  
+  if (poolSizeInput) {
+    poolSizeInput.max = maxPoolCount;
+    poolSizeInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") startGameCustom();
+    });
+  }
 });
+
+// Redirection du bouton reset vers la page d'accueil
+const originalResetBtn = $("resetBtn");
+if (originalResetBtn) {
+  originalResetBtn.removeEventListener("click", null);
+  originalResetBtn.addEventListener("click", () => {
+    if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
+      const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
+      const holder = localStorage.getItem(BEST_HOLDER_KEY) || state.bestRecordHolder || "";
+      Object.assign(state, { 
+        combat: 1,
+        streak: 0,
+        bestRecord: best,
+        bestRecordHolder: holder,
+        championId: null,
+        challengerId: null,
+        usedIds: [],
+        poolIds: [],
+        history: [],
+        lastSnapshot: null
+      });
+      save();
+      showHome();
+      toast("🔄 Retour à la sélection du mode !");
+    }
+  });
+}
 
 async function syncCommunityStats(winner, loser) {
   if (!window.db || !window.firestoreReady) return Promise.resolve();
@@ -612,20 +753,17 @@ async function syncCommunityStats(winner, loser) {
   const db = window.db;
 
   try {
-    // Récupérer les Elos actuels
     const winnerDoc = await db.collection("communityCharacterStats").doc(String(winner.id)).get();
     const loserDoc = await db.collection("communityCharacterStats").doc(String(loser.id)).get();
 
     const winnerElo = (winnerDoc.exists ? winnerDoc.data().elo : 1600) || 1600;
     const loserElo = (loserDoc.exists ? loserDoc.data().elo : 1600) || 1600;
 
-    // Calculer les changements Elo
     const { winnerChange, loserChange } = calculateEloChange(winnerElo, loserElo);
 
     const newWinnerElo = Math.max(400, Math.min(3200, winnerElo + winnerChange));
     const newLoserElo = Math.max(400, Math.min(3200, loserElo + loserChange));
 
-    // Écrire dans Firestore
     const batch = db.batch();
 
     const winnerRef = db.collection("communityCharacterStats").doc(String(winner.id));
