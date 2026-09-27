@@ -127,7 +127,6 @@ function loadState() {
 function createNewState(poolSize = null) {
   let ids = CHARACTERS.map(c => c.id);
   
-  // Si un poolSize est spécifié, on mélange et on prend les N premiers
   if (poolSize && poolSize > 0 && poolSize < ids.length) {
     ids = ids.sort(() => Math.random() - 0.5).slice(0, poolSize);
   }
@@ -581,17 +580,6 @@ $("chooseChallenger").addEventListener("click", e => { e.stopPropagation(); choo
 $("championCard").addEventListener("click", () => choose(state.championId));
 $("challengerCard").addEventListener("click", () => choose(state.challengerId));
 
-$("resetBtn").addEventListener("click", () => {
-  if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
-    const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
-    const holder = localStorage.getItem(BEST_HOLDER_KEY) || state.bestRecordHolder || "";
-    Object.assign(state, createNewState(), {bestRecord: best, bestRecordHolder: holder, lastSnapshot: null});
-    save();
-    render();
-    toast("🔄 Nouveau tournoi lancé !");
-  }
-});
-
 // === PAGE D'ACCUEIL ===
 function showHome() {
   const arena = $("arena");
@@ -611,9 +599,11 @@ function showHome() {
     homeContainer = document.createElement("div");
     homeContainer.id = "homeContainer";
     homeContainer.className = "home-container";
-    document.querySelector("main").insertBefore(homeContainer, arena);
+    const main = document.querySelector("main");
+    if (main) main.insertBefore(homeContainer, arena);
   }
   
+  homeContainer.style.display = "flex";
   homeContainer.innerHTML = `
     <div class="home-content">
       <div class="home-header">
@@ -626,7 +616,7 @@ function showHome() {
           <div class="option-icon">🌌</div>
           <h2>Catalogue Complet</h2>
           <p><strong id="fullPoolCount">645</strong> personnages</p>
-          <button class="option-btn" onclick="startGame(null)">Commencer</button>
+          <button class="option-btn" id="fullPoolBtn">Commencer</button>
         </div>
         
         <div class="option-card custom-pool">
@@ -643,7 +633,7 @@ function showHome() {
               value="100"
               placeholder="Entre 10 et 645"
             >
-            <button class="option-btn" onclick="startGameCustom()">Commencer</button>
+            <button class="option-btn" id="customPoolBtn">Commencer</button>
           </div>
         </div>
       </div>
@@ -653,6 +643,25 @@ function showHome() {
       </div>
     </div>
   `;
+
+  // Attacher les event listeners
+  const fullPoolBtn = $("fullPoolBtn");
+  const customPoolBtn = $("customPoolBtn");
+  const poolSizeInput = $("poolSizeInput");
+
+  if (fullPoolBtn) {
+    fullPoolBtn.addEventListener("click", () => startGame(null));
+  }
+
+  if (customPoolBtn) {
+    customPoolBtn.addEventListener("click", startGameCustom);
+  }
+
+  if (poolSizeInput) {
+    poolSizeInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") startGameCustom();
+    });
+  }
 }
 
 function hideHome() {
@@ -672,38 +681,33 @@ function hideHome() {
   if (rightsPanel) rightsPanel.style.display = "block";
 }
 
-window.startGame = function(poolSize) {
+function startGame(poolSize) {
   Object.assign(state, createNewState(poolSize));
   save();
   render();
   hideHome();
-};
+}
 
-window.startGameCustom = function() {
+function startGameCustom() {
   const input = $("poolSizeInput");
   const size = Math.floor(Number(input.value) || 0);
   const maxSize = CHARACTERS.length;
   
   if (size < 10 || size > maxSize || !Number.isInteger(size)) {
     alert(`⚠️ Veuillez entrer un nombre entre 10 et ${maxSize}.`);
+    input.focus();
     return;
   }
   
   startGame(size);
-};
+}
 
 // === INITIALISATION ===
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const maxPoolCount = CHARACTERS.length;
-  const fullPoolCount = $("fullPoolCount");
-  const maxPoolCountEl = $("maxPoolCount");
-  const poolSizeInput = $("poolSizeInput");
-  
-  if (fullPoolCount) fullPoolCount.textContent = maxPoolCount;
-  if (maxPoolCountEl) maxPoolCountEl.textContent = maxPoolCount;
   
   // Vérifier si une partie est en cours
-  if (state.championId && state.usedIds.length > 0) {
+  if (state.championId && state.usedIds && state.usedIds.length > 0) {
     // Partie existante : afficher l'arène
     hideHome();
     render();
@@ -711,41 +715,29 @@ window.addEventListener("load", () => {
     // Aucune partie : afficher la page d'accueil
     showHome();
   }
-  
-  if (poolSizeInput) {
-    poolSizeInput.max = maxPoolCount;
-    poolSizeInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") startGameCustom();
-    });
-  }
 });
 
-// Redirection du bouton reset vers la page d'accueil
-const originalResetBtn = $("resetBtn");
-if (originalResetBtn) {
-  originalResetBtn.removeEventListener("click", null);
-  originalResetBtn.addEventListener("click", () => {
-    if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
-      const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
-      const holder = localStorage.getItem(BEST_HOLDER_KEY) || state.bestRecordHolder || "";
-      Object.assign(state, { 
-        combat: 1,
-        streak: 0,
-        bestRecord: best,
-        bestRecordHolder: holder,
-        championId: null,
-        challengerId: null,
-        usedIds: [],
-        poolIds: [],
-        history: [],
-        lastSnapshot: null
-      });
-      save();
-      showHome();
-      toast("🔄 Retour à la sélection du mode !");
-    }
-  });
-}
+$("resetBtn").addEventListener("click", () => {
+  if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
+    const best = Number(localStorage.getItem(BEST_KEY) || state.bestRecord || 0);
+    const holder = localStorage.getItem(BEST_HOLDER_KEY) || state.bestRecordHolder || "";
+    Object.assign(state, { 
+      combat: 1,
+      streak: 0,
+      bestRecord: best,
+      bestRecordHolder: holder,
+      championId: null,
+      challengerId: null,
+      usedIds: [],
+      poolIds: [],
+      history: [],
+      lastSnapshot: null
+    });
+    save();
+    showHome();
+    toast("🔄 Retour à la sélection du mode !");
+  }
+});
 
 async function syncCommunityStats(winner, loser) {
   if (!window.db || !window.firestoreReady) return Promise.resolve();
