@@ -4514,7 +4514,7 @@ const CHARACTERS = [
   "media": "Films",
   "id": "c645",
   "wiki": "Lucy (film)"
-}
+},
 {
   "name": "Scorpion",
   "universe": "Mortal Kombat",
