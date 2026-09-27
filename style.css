@@ -597,3 +597,38 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
     font-size: 13px;
   }
 }
+
+/* === FIX CLICS PAGE D'ACCUEIL === */
+#homeContainer {
+  pointer-events: auto !important;
+  z-index: 100 !important;
+}
+
+.home-content {
+  pointer-events: auto !important;
+}
+
+.home-options {
+  pointer-events: auto !important;
+}
+
+.option-card {
+  pointer-events: auto !important;
+}
+
+.option-btn {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+.custom-input-group {
+  pointer-events: auto !important;
+}
+
+.custom-input-group input {
+  pointer-events: auto !important;
+}
+
+.custom-input-group label {
+  pointer-events: auto !important;
+}
