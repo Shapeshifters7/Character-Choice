@@ -106,11 +106,33 @@ function loadState() {
       if (typeof raw.bestRecordHolder !== "string") raw.bestRecordHolder = "";
       if (!Object.prototype.hasOwnProperty.call(raw, "lastSnapshot")) raw.lastSnapshot = null;
 
-      if (raw.championId && raw.challengerId && Array.isArray(raw.usedIds)) {
-        if (!raw.usedIds.includes(raw.championId)) raw.usedIds.unshift(raw.championId);
-        if (!raw.usedIds.includes(raw.challengerId)) raw.usedIds.push(raw.challengerId);
-        return raw;
-      }
+     if (raw.championId && raw.challengerId && Array.isArray(raw.usedIds)) {
+  if (!raw.usedIds.includes(raw.championId)) {
+    raw.usedIds.unshift(raw.championId);
+  }
+
+  if (!raw.usedIds.includes(raw.challengerId)) {
+    raw.usedIds.push(raw.challengerId);
+  }
+
+  const currentIds = CHARACTERS.map((character) => character.id);
+
+  /*
+   * Si l'ancienne partie utilisait le catalogue complet,
+   * on ajoute automatiquement les nouveaux personnages.
+   *
+   * Une partie personnalisée de 100 personnages reste inchangée.
+   */
+  if (Array.isArray(raw.poolIds) && raw.poolIds.length >= 645) {
+    raw.poolIds = currentIds;
+  }
+
+  if (!Array.isArray(raw.poolIds) || raw.poolIds.length === 0) {
+    raw.poolIds = currentIds;
+  }
+
+  return raw;
+}
     }
   } catch {}
 
