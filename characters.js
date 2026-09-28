@@ -4549,5 +4549,47 @@ const CHARACTERS = [
   "media": "Anime/Jeux Vidéo",
   "id": "c650",
   "wiki": "Trevor Belmont"
+},
+{
+  "name": "Alice",
+  "universe": "Alice au pays des merveilles",
+  "media": "Romans/Animation/Films",
+  "id": "c651",
+  "wiki": "Alice (Alice au pays des merveilles)"
+},
+{
+  "name": "Pikachu",
+  "universe": "Pokémon",
+  "media": "Anime",
+  "id": "c652",
+  "wiki": "Pikachu"
+},
+{
+  "name": "Sam Witwicky",
+  "universe": "Transformers",
+  "media": "Films",
+  "id": "c653",
+  "wiki": "Sam Witwicky"
+},
+{
+  "name": "Robert Neville",
+  "universe": "Je suis une légende",
+  "media": "Films",
+  "id": "c654",
+  "wiki": "Robert Neville"
+},
+{
+  "name": "Escanor",
+  "universe": "The Seven Deadly Sins",
+  "media": "Anime",
+  "id": "c655",
+  "wiki": "Escanor"
+},
+{
+  "name": "Merlin",
+  "universe": "The Seven Deadly Sins",
+  "media": "Anime/Manga",
+  "id": "c656",
+  "wiki": "Merlin (The Seven Deadly Sins)"
 }
 ];
