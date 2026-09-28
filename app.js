@@ -393,6 +393,78 @@ function toast(message) {
   setTimeout(() => el.classList.remove("show"), 1800);
 }
 
+function showTournamentEnd() {
+  if (!state) return;
+
+  const overlay = $("tournamentEnd");
+  const slot = $("tournamentEndCardSlot");
+  const title = $("tournamentEndTitle");
+  const subtitle = $("tournamentEndSubtitle");
+  const source = $("championCard");
+  const champion = getChar(state.championId);
+
+  if (!overlay || !slot || !title || !subtitle || !source || !champion) return;
+
+  const previous = slot.querySelector(".tournament-end__card");
+  if (previous) previous.remove();
+
+  const rect = source.getBoundingClientRect();
+  const card = source.cloneNode(true);
+  card.classList.add("tournament-end__card");
+  card.removeAttribute("id");
+  card.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+  const button = card.querySelector(".choose");
+  if (button) button.remove();
+
+  title.textContent = `${champion.name} a gagné le tournoi !`;
+  subtitle.textContent = `Il a traversé les ${state.poolIds.length} personnages du pool.`;
+  slot.appendChild(card);
+
+  const startWidth = rect.width;
+  const startHeight = rect.height;
+  const targetWidth = Math.min(startWidth, window.innerWidth * 0.86, 560);
+  const targetScale = Math.min(
+    targetWidth / startWidth,
+    (window.innerHeight * 0.64) / startHeight,
+    1
+  );
+  const targetWidthScaled = startWidth * targetScale;
+  const targetHeightScaled = startHeight * targetScale;
+  const targetLeft = (window.innerWidth - targetWidthScaled) / 2;
+  const targetTop = Math.max(28, (window.innerHeight * 0.42) - (targetHeightScaled / 2));
+
+  Object.assign(card.style, {
+    position: "fixed",
+    left: `${rect.left}px`,
+    top: `${rect.top}px`,
+    width: `${startWidth}px`,
+    height: `${startHeight}px`,
+    margin: "0",
+    transformOrigin: "top left",
+    transform: "translate3d(0, 0, 0) scale(1)",
+  });
+
+  overlay.classList.add("is-visible", "is-entering");
+  overlay.setAttribute("aria-hidden", "false");
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      card.style.transform = `translate3d(${targetLeft - rect.left}px, ${targetTop - rect.top}px, 0) scale(${targetScale})`;
+      overlay.classList.remove("is-entering");
+    });
+  });
+
+  window.setTimeout(() => {
+    overlay.classList.add("is-settled");
+  }, 720);
+
+  window.setTimeout(() => {
+    overlay.classList.remove("is-visible", "is-settled");
+    overlay.setAttribute("aria-hidden", "true");
+    slot.replaceChildren();
+  }, 5200);
+}
+
 function render() {
   if (!state) return;
 
@@ -473,6 +545,7 @@ function choose(winnerId) {
     save();
     render();
     toast("🎉 Le pool entier a été parcouru !");
+    showTournamentEnd();
     return;
   }
 

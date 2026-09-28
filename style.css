@@ -629,3 +629,140 @@ a {
 .option-btn {
   cursor: pointer !important;
 }
+
+/* ===== FIN DE TOURNOI : ANIMATION PREMIUM ===== */
+.tournament-end{
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  display:none;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.tournament-end.is-visible{display:block}
+
+.tournament-end__veil{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(248,216,74,.16), transparent 28%),
+    radial-gradient(circle at 50% 45%, rgba(140,124,255,.10), transparent 48%),
+    rgba(5,7,17,.82);
+  backdrop-filter:blur(8px) saturate(115%);
+  -webkit-backdrop-filter:blur(8px) saturate(115%);
+  transition:opacity .65s ease;
+}
+
+.tournament-end.is-visible .tournament-end__veil{opacity:1}
+
+.tournament-end__content{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+
+.tournament-end__card-slot{
+  position:static;
+  width:100%;
+  height:100%;
+}
+
+.tournament-end__card{
+  z-index:2;
+  cursor:default !important;
+  pointer-events:none !important;
+  box-shadow:
+    0 0 0 1px rgba(248,216,74,.72),
+    0 0 0 10px rgba(248,216,74,.035),
+    0 25px 90px rgba(0,0,0,.58),
+    0 0 80px rgba(248,216,74,.16) !important;
+  transition:transform .72s cubic-bezier(.16,1,.3,1), box-shadow .72s ease !important;
+}
+
+.tournament-end__card::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  pointer-events:none;
+  background:linear-gradient(115deg,transparent 18%,rgba(255,255,255,.14) 42%,transparent 58%);
+  transform:translateX(-125%);
+  animation:tournamentSheen 1.25s .18s ease-out forwards;
+}
+
+.tournament-end__card .label{
+  color:var(--accent) !important;
+}
+
+.tournament-end__message{
+  position:absolute;
+  left:50%;
+  top:calc(42% + min(32vh, 270px));
+  width:min(92vw, 760px);
+  transform:translate(-50%,18px);
+  text-align:center;
+  opacity:0;
+  z-index:3;
+  transition:opacity .55s ease .48s, transform .7s cubic-bezier(.16,1,.3,1) .48s;
+}
+
+.tournament-end.is-visible .tournament-end__message{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+.tournament-end__eyebrow{
+  color:var(--accent);
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:.32em;
+  text-shadow:0 0 22px rgba(248,216,74,.42);
+}
+
+.tournament-end__message h2{
+  margin:8px 0 5px;
+  color:#fff;
+  font-size:clamp(28px,4.2vw,52px);
+  line-height:1.02;
+  letter-spacing:-1.5px;
+  text-shadow:0 4px 30px rgba(0,0,0,.6),0 0 30px rgba(248,216,74,.12);
+}
+
+.tournament-end__message p{
+  margin:0;
+  color:#cfd3eb;
+  font-size:clamp(13px,1.6vw,17px);
+  font-weight:700;
+}
+
+.tournament-end.is-settled .tournament-end__card{
+  box-shadow:
+    0 0 0 1px rgba(248,216,74,.85),
+    0 0 0 10px rgba(248,216,74,.045),
+    0 25px 100px rgba(0,0,0,.62),
+    0 0 105px rgba(248,216,74,.20) !important;
+}
+
+@keyframes tournamentSheen{
+  0%{transform:translateX(-125%)}
+  100%{transform:translateX(125%)}
+}
+
+@media(max-width:560px){
+  .tournament-end__message{
+    top:calc(42% + min(30vh, 220px));
+    width:calc(100% - 28px);
+  }
+
+  .tournament-end__eyebrow{font-size:9px;letter-spacing:.24em}
+  .tournament-end__message h2{letter-spacing:-.8px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .tournament-end__veil,
+  .tournament-end__message,
+  .tournament-end__card{transition:none !important}
+  .tournament-end__card::after{animation:none}
+}

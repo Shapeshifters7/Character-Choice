@@ -89,6 +89,18 @@
 
 <div id="toast" class="toast" aria-live="polite"></div>
 
+<div id="tournamentEnd" class="tournament-end" aria-hidden="true">
+  <div class="tournament-end__veil"></div>
+  <div class="tournament-end__content" aria-live="assertive">
+    <div class="tournament-end__card-slot" id="tournamentEndCardSlot"></div>
+    <div class="tournament-end__message">
+      <div class="tournament-end__eyebrow">TOURNOI TERMINÉ</div>
+      <h2 id="tournamentEndTitle">—</h2>
+      <p id="tournamentEndSubtitle">Le champion a traversé tout le pool.</p>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
