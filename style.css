@@ -706,6 +706,9 @@ a {
   color:var(--accent) !important;
 }
 
+.tournament-end.is-visible .tournament-end__message {
+  pointer-events: auto;
+}
 .tournament-end__message{
   position:absolute;
   left:50%;
