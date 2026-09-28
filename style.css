@@ -709,7 +709,8 @@ a {
 .tournament-end__message{
   position:absolute;
   left:50%;
-  top:calc(42% + min(32vh, 270px));
+  top:auto;
+  bottom:clamp(22px, 4vh, 42px);
   width:min(92vw, 760px);
   transform:translate(-50%,18px);
   text-align:center;
@@ -762,7 +763,8 @@ a {
 
 @media(max-width:560px){
   .tournament-end__message{
-    top:calc(42% + min(30vh, 220px));
+    top:auto;
+    bottom:18px;
     width:calc(100% - 28px);
   }
 
@@ -780,7 +782,7 @@ a {
 /* Bouton d'action de fin de tournoi */
 .tournament-end__button{
   position:relative;
-  z-index:4;
+  z-index:20;
   margin:22px auto 0;
   display:inline-flex;
   align-items:center;
