@@ -766,3 +766,43 @@ a {
   .tournament-end__card{transition:none !important}
   .tournament-end__card::after{animation:none}
 }
+
+/* Bouton d'action de fin de tournoi */
+.tournament-end__button{
+  position:relative;
+  z-index:4;
+  margin:22px auto 0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:220px;
+  padding:13px 22px;
+  border:1px solid rgba(248,216,74,.55);
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(248,216,74,.18),rgba(248,216,74,.08));
+  color:#fff;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 35px rgba(0,0,0,.25),0 0 30px rgba(248,216,74,.08);
+  transition:transform .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.tournament-end__button:hover{
+  transform:translateY(-2px);
+  background:linear-gradient(180deg,rgba(248,216,74,.26),rgba(248,216,74,.11));
+  border-color:rgba(248,216,74,.85);
+  box-shadow:0 14px 40px rgba(0,0,0,.3),0 0 35px rgba(248,216,74,.14);
+}
+.tournament-end__button:focus-visible{
+  outline:3px solid rgba(255,255,255,.9);
+  outline-offset:4px;
+}
+@media(max-width:560px){
+  .tournament-end__button{width:calc(100% - 28px);min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .tournament-end__button{transition:none}
+}
+
+.tournament-end.is-visible{pointer-events:auto}
+.tournament-end__card{pointer-events:none !important}

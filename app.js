@@ -420,6 +420,14 @@ function showTournamentEnd() {
   subtitle.textContent = `Il a traversé les ${state.poolIds.length} personnages du pool.`;
   slot.appendChild(card);
 
+  // Le clone peut être créé avant que l'image du champion ait fini de charger.
+  // On recharge donc explicitement son portrait dans la carte finale.
+  const endPortrait = card.querySelector(".portrait");
+  if (endPortrait) {
+    endPortrait.dataset.characterId = String(champion.id);
+    loadPortrait(champion, endPortrait);
+  }
+
   const startWidth = rect.width;
   const startHeight = rect.height;
   const targetWidth = Math.min(startWidth, window.innerWidth * 0.86, 560);
@@ -458,11 +466,16 @@ function showTournamentEnd() {
     overlay.classList.add("is-settled");
   }, 720);
 
-  window.setTimeout(() => {
-    overlay.classList.remove("is-visible", "is-settled");
-    overlay.setAttribute("aria-hidden", "true");
-    slot.replaceChildren();
-  }, 5200);
+}
+
+function closeTournamentEnd() {
+  const overlay = $("tournamentEnd");
+  const slot = $("tournamentEndCardSlot");
+  if (!overlay) return;
+
+  overlay.classList.remove("is-visible", "is-settled");
+  overlay.setAttribute("aria-hidden", "true");
+  if (slot) slot.replaceChildren();
 }
 
 function render() {
@@ -1003,30 +1016,44 @@ function initializeArenaEvents() {
     });
   }
 
+  const startNewTournament = () => {
+    const best = Number(localStorage.getItem(BEST_KEY) || state?.bestRecord || 0);
+    const holder = localStorage.getItem(BEST_HOLDER_KEY) || state?.bestRecordHolder || "";
+
+    closeTournamentEnd();
+
+    state = {
+      combat: 1,
+      streak: 0,
+      bestRecord: best,
+      bestRecordHolder: holder,
+      championId: null,
+      challengerId: null,
+      usedIds: [],
+      poolIds: Array.isArray(CHARACTERS) ? CHARACTERS.map((c) => c.id) : [],
+      history: [],
+      lastSnapshot: null,
+    };
+
+    save();
+    showHome();
+    toast("🔄 Retour à la sélection du mode !");
+  };
+
   if (resetBtn) {
     resetBtn.onclick = null;
     resetBtn.addEventListener("click", () => {
       if (confirm("Commencer un nouveau tournoi ? Le record absolu du joueur sera conservé.")) {
-        const best = Number(localStorage.getItem(BEST_KEY) || state?.bestRecord || 0);
-        const holder = localStorage.getItem(BEST_HOLDER_KEY) || state?.bestRecordHolder || "";
-
-        state = {
-          combat: 1,
-          streak: 0,
-          bestRecord: best,
-          bestRecordHolder: holder,
-          championId: null,
-          challengerId: null,
-          usedIds: [],
-          poolIds: Array.isArray(CHARACTERS) ? CHARACTERS.map((c) => c.id) : [],
-          history: [],
-          lastSnapshot: null,
-        };
-
-        save();
-        showHome();
-        toast("🔄 Retour à la sélection du mode !");
+        startNewTournament();
       }
+    });
+  }
+
+  const endNewTournamentBtn = $("tournamentEndNewTournament");
+  if (endNewTournamentBtn) {
+    endNewTournamentBtn.onclick = null;
+    endNewTournamentBtn.addEventListener("click", () => {
+      startNewTournament();
     });
   }
 }
