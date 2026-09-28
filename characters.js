@@ -4528,5 +4528,26 @@ const CHARACTERS = [
   "media": "Jeux vidéo",
   "id": "c647",
   "wiki": "Raiden (Mortal Kombat)"
+},
+{
+  "name": "Michonne",
+  "universe": "The Walking Dead",
+  "media": "Séries/Comics",
+  "id": "c648",
+  "wiki": "Michonne"
+},
+{
+  "name": "Numéro 5",
+  "universe": "The Umbrella Academy",
+  "media": "Séries/Comics",
+  "id": "c649",
+  "wiki": "Numéro Cinq (The Umbrella Academy)"
+},
+{
+  "name": "Trevor Belmont",
+  "universe": "Castlevania",
+  "media": "Anime/Jeux Vidéo",
+  "id": "c650",
+  "wiki": "Trevor Belmont"
 }
 ];
