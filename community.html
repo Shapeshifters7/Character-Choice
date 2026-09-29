@@ -368,11 +368,10 @@ function renderGrid(list){
     const card = document.createElement("article");
     card.className = "stat-card";
 
-    const ranking = document.createElement("div");
-    const globalPosition = mapped.findIndex(m => m._docId === item._docId) + 1;
-    
-    ranking.className = `ranking-position ranking-position-${globalPosition}`;
-    ranking.textContent = `#${globalPosition}`;  // ← Affiche la vraie position
+   const ranking = document.createElement("div");
+   ranking.className = `ranking-position ranking-position-${item.globalPosition <= 3 ? item.globalPosition : 'other'}`;
+   ranking.textContent = `#${item.globalPosition}`;
+   card.appendChild(ranking);
 
 
     const portrait = createPortraitElement(item);
@@ -527,9 +526,11 @@ function loadCommunityStats(){
           elo: derived.elo
         }, r);
       });
-
+    
       mapped = sortList(mapped, sortEl.value);
-
+      mapped.forEach((item, index) => {
+      item.globalPosition = index + 1;
+      });
       statusEl.style.display = "none";
       statusEl.className = "";
       applyFiltersAndRender();
