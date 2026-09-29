@@ -369,9 +369,11 @@ function renderGrid(list){
     card.className = "stat-card";
 
     const ranking = document.createElement("div");
-    ranking.className = `ranking-position ranking-position-${index + 1}`;
-    ranking.textContent = `#${index + 1}`;
-    card.appendChild(ranking);
+    const globalPosition = mapped.findIndex(m => m._docId === item._docId) + 1;
+    
+    ranking.className = `ranking-position ranking-position-${globalPosition}`;
+    ranking.textContent = `#${globalPosition}`;  // ← Affiche la vraie position
+
 
     const portrait = createPortraitElement(item);
     card.appendChild(portrait);
