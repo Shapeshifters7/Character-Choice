@@ -4591,5 +4591,68 @@ const CHARACTERS = [
   "media": "Anime/Manga",
   "id": "c656",
   "wiki": "Merlin (The Seven Deadly Sins)"
+},
+{
+  "name": "Le Professeur",
+  "universe": "La Casa de Papel",
+  "media": "Séries",
+  "id": "c657",
+  "wiki": "Le Professeur (La Casa de Papel)"
+},
+{
+  "name": "Berlin",
+  "universe": "La Casa de Papel",
+  "media": "Séries",
+  "id": "c658",
+  "wiki": "Berlin (La Casa de Papel)"
+},
+{
+  "name": "Mephisto",
+  "universe": "Marvel",
+  "media": "Comics",
+  "id": "c659",
+  "wiki": "Mephisto (Marvel Comics)"
+},
+{
+  "name": "Lara Croft",
+  "universe": "Tomb Raider",
+  "media": "Jeux vidéo",
+  "id": "c660",
+  "wiki": "Lara Croft"
+},
+{
+  "name": "Mockingbird (Bobbi Morse)",
+  "universe": "Marvel",
+  "media": "Comics/Séries",
+  "id": "c661",
+  "wiki": "Bobbi Morse"
+},
+{
+  "name": "Gollum",
+  "universe": "Le Seigneur des Anneaux",
+  "media": "Films/Romans",
+  "id": "c662",
+  "wiki": "Gollum"
+},
+{
+  "name": "Bella Swan",
+  "universe": "Twilight",
+  "media": "Films/Romans",
+  "id": "c663",
+  "wiki": "Bella Swan"
+},
+{
+  "name": "Veronica Mars",
+  "universe": "Veronica Mars",
+  "media": "Séries",
+  "id": "c664",
+  "wiki": "Veronica Mars"
+},
+{
+  "name": "Chucky",
+  "universe": "Chucky",
+  "media": "Films",
+  "id": "c665",
+  "wiki": "Chucky"
 }
 ];
