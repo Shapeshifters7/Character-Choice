@@ -2879,7 +2879,7 @@ const CHARACTERS = [
   },
   {
     "name":"Bowser",
-    "universe":"Mario",
+    "universe":"Super Mario",
     "media":"Jeux vidéo",
     "id":"c412",
     "wiki":"Bowser"
@@ -4654,5 +4654,68 @@ const CHARACTERS = [
   "media": "Films",
   "id": "c665",
   "wiki": "Chucky"
+},
+{
+  "name": "Alec Lightwood",
+  "universe": "Shadowhunters/Romans",
+  "media": "Séries",
+  "id": "c666",
+  "wiki": "Alec Lightwood"
+},
+{
+  "name": "Jace Herondale",
+  "universe": "Shadowhunters/Romans",
+  "media": "Séries",
+  "id": "c667",
+  "wiki": "Jace Herondale"
+},
+{
+  "name": "Bree Van de Kamp",
+  "universe": "Desperate Housewives",
+  "media": "Séries",
+  "id": "c668",
+  "wiki": "Bree Van de Kamp"
+},
+{
+  "name": "Gabrielle Solis",
+  "universe": "Desperate Housewives",
+  "media": "Séries",
+  "id": "c669",
+  "wiki": "Gabrielle Solis"
+},
+{
+  "name": "Blair Waldorf",
+  "universe": "Gossip Girl",
+  "media": "Séries",
+  "id": "c670",
+  "wiki": "Blair Waldorf"
+},
+{
+  "name": "Chuck Bass",
+  "universe": "Gossip Girl",
+  "media": "Séries",
+  "id": "c671",
+  "wiki": "Chuck Bass"
+},
+{
+  "name": "D'Jok",
+  "universe": "Galactik Football",
+  "media": "Dessin Animé",
+  "id": "c672",
+  "wiki": "D'Jok"
+},
+{
+  "name": "Micro-Ice",
+  "universe": "Galactik Football",
+  "media": "Dessin Animé",
+  "id": "c673",
+  "wiki": "Micro-Ice"
+},
+{
+  "name": "Melinda Gordon",
+  "universe": "Ghost Whisperer",
+  "media": "Séries",
+  "id": "c674",
+  "wiki": "Melinda Gordon"
 }
 ];
