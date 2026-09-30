@@ -22,7 +22,8 @@
     margin-top:18px;
     perspective:1000px;
     width:100%;
-    auto-rows: min-content;
+    align-items:start;
+    auto-rows:auto;
   }
   
   .stat-card{
@@ -38,6 +39,8 @@
     transition:all .28s ease;
     overflow:visible;
     transform-origin:center;
+    height:auto;
+    width:100%;
   }
   .stat-card:hover{
     border-color:var(--accent);
@@ -150,13 +153,15 @@
     .community-header{align-items:flex-start}
     .controls{width:100%}
     .controls input[type="search"]{min-width:0;width:100%}
-    .stats-grid{grid-template-columns:1fr;gap:10px}
-    .stat-card{padding:10px;transform:none !important}
+    .stats-grid{grid-template-columns:1fr;gap:10px;align-items:start}
+    .stat-card{padding:10px;transform:none !important;width:100%}
     .stat-card:hover{transform:none !important}
     .stat-card:hover .portrait{transform:none}
     .stat-card:hover .stat-info .name{font-size:14px}
     .portrait{width:56px;height:68px;flex:0 0 56px}
     .hover-details{min-width:180px;padding:12px 14px}
+  }
+</style>
   }
 </style>
 </head>
