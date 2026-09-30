@@ -6,6 +6,17 @@
 <meta name="theme-color" content="#090a12">
 <title>Character Choice — Statistiques communautaires</title>
 <link rel="stylesheet" href="style.css">
+
+}
+.community-wrap .stats-grid{
+  width:100%;
+  max-width:100%;
+}
+
+.community-wrap .stat-card{
+  box-sizing:border-box;
+  max-width:100%;
+}
 <style>
   /* Styles spécifiques à cette page (complément de style.css) */
   .community-wrap{max-width:1200px;margin:36px auto;padding:0 18px 40px}
@@ -133,19 +144,58 @@
   .metric-display h3{margin:0 0 10px;color:var(--accent);font-size:28px}
   .metric-display p{color:var(--muted);margin:0}
   .elo-rank{color:#f8d84a;font-weight:900}
-  @media(max-width:700px){
-    .community-header{align-items:flex-start}
-    .controls input[type="search"]{min-width:140px;width:100%}
-    .stat-card:hover{transform:scale(1.03) translateZ(0)}
-    .stat-card:hover .portrait{transform:scale(1.08)}
-    .stat-card:hover .stat-info .name{font-size:15px}
-    .stat-card{padding:10px}
-    .portrait{width:56px;height:68px}
-    .hover-details{
-      min-width:180px;
-      padding:12px 14px;
-    }
+ @media(max-width:700px){
+  .community-header{
+    align-items:flex-start;
   }
+
+  .controls{
+    width:100%;
+  }
+
+  .controls input[type="search"]{
+    min-width:0;
+    width:100%;
+  }
+
+  .community-wrap .stats-grid{
+    grid-template-columns:1fr;
+    width:100%;
+    gap:10px;
+  }
+
+  .community-wrap .stat-card{
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    padding:10px;
+    transform:none !important;
+  }
+
+  .community-wrap .stat-card:hover{
+    transform:none !important;
+  }
+
+  .community-wrap .stat-card:hover .portrait{
+    transform:none;
+  }
+
+  .community-wrap .stat-card:hover .stat-info .name{
+    font-size:14px;
+  }
+
+  .community-wrap .portrait{
+    width:56px;
+    height:68px;
+    flex:0 0 56px;
+  }
+
+  .hover-details{
+    min-width:180px;
+    padding:12px 14px;
+   }
+ }
+}
 </style>
 </head>
 <body>
