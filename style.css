@@ -181,6 +181,17 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 .stats-page .stats-media-row:last-child{border-bottom:0}
 .stats-page .stats-media-row span{color:#fff}
 .stats-page .stats-media-row strong{color:var(--accent);font-size:18px}
+
+/* COMMUNITY PAGE STATS GRID */
+.community-wrap .stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:14px;
+  margin-top:18px;
+  perspective:1000px;
+  width:100%;
+}
+
 .rights-panel{margin-top:14px}
 .rights-panel p{color:var(--muted);font-size:12px;line-height:1.55;margin:0}
 .character-card.winner-flash{animation:winnerFlash .45s ease}
@@ -227,6 +238,7 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
   .controls select{width:100%}
   .choose{padding:16px 18px;font-size:15px}
   .stats-page .stats-grid{grid-template-columns:1fr;gap:8px}
+  .community-wrap .stats-grid{grid-template-columns:1fr;gap:10px}
   .stats-page .stat-card{padding:14px}
   .stats-page .record-holder{font-size:16px}
   .mini-stats{grid-template-columns:1fr 1fr 1fr}
@@ -652,6 +664,7 @@ a {
   cursor:pointer;
   box-shadow:0 10px 35px rgba(0,0,0,.25),0 0 30px rgba(248,216,74,.08);
   transition:transform .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease;
+  pointer-events:auto;
 }
 
 .tournament-end__button:hover{
@@ -785,3 +798,4 @@ a {
     animation:none
   }
 }
+
