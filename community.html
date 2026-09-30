@@ -6,17 +6,6 @@
 <meta name="theme-color" content="#090a12">
 <title>Character Choice — Statistiques communautaires</title>
 <link rel="stylesheet" href="style.css">
-
-}
-.community-wrap .stats-grid{
-  width:100%;
-  max-width:100%;
-}
-
-.community-wrap .stat-card{
-  box-sizing:border-box;
-  max-width:100%;
-}
 <style>
   /* Styles spécifiques à cette page (complément de style.css) */
   .community-wrap{max-width:1200px;margin:36px auto;padding:0 18px 40px}
@@ -25,29 +14,17 @@
   .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .controls input[type="search"]{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:220px}
   .controls select{background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+  
   .stats-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,220px));
-  gap:14px;
-  margin-top:18px;
-  perspective:1000px;
-  justify-content:flex-start;
-}
-
-@media(max-width:768px){
-  .stats-grid{
-    grid-template-columns:repeat(auto-fill,minmax(200px,200px));
-    justify-content:center;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+    margin-top:18px;
+    perspective:1000px;
+    width:100%;
   }
-}
-
-@media(max-width:560px){
-  .stats-grid{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-}
-  .stats-grid{disp
+  
+  .stat-card{
     position:relative;
     background:rgba(18,21,40,.86);
     border:1px solid var(--line);
@@ -65,15 +42,15 @@
     border-color:var(--accent);
     box-shadow:0 0 30px rgba(248,216,74,.35),inset 0 0 20px rgba(248,216,74,.08);
     z-index:100;
-  }
-  .stat-card:hover{
     transform:scale(1.08) translateZ(0);
     position:relative;
   }
+  
   .ranking-position{min-width:34px;font-size:18px;font-weight:1000;color:var(--muted);text-align:center;flex-shrink:0}
   .ranking-position-1{color:#f8d84a}
   .ranking-position-2{color:#cfd5e8}
   .ranking-position-3{color:#d89062}
+  
   .portrait{
     width:64px;height:80px;flex:0 0 64px;border-radius:6px;
     background:#0b0d1a;display:flex;align-items:center;justify-content:center;
@@ -84,6 +61,7 @@
     border-radius:8px;
   }
   .portrait img{width:100%;height:100%;object-fit:cover;display:block}
+  
   .stat-info{
     flex:1;min-width:0;transition:all .28s ease;
   }
@@ -94,6 +72,7 @@
   .stat-card:hover .stat-info .name{
     font-size:16px;color:var(--accent);
   }
+  
   .stat-row{
     display:flex;gap:10px;align-items:center;flex-wrap:wrap;
     margin-top:8px;color:var(--muted);font-weight:800;font-size:13px;
@@ -165,58 +144,19 @@
   .metric-display h3{margin:0 0 10px;color:var(--accent);font-size:28px}
   .metric-display p{color:var(--muted);margin:0}
   .elo-rank{color:#f8d84a;font-weight:900}
- @media(max-width:700px){
-  .community-header{
-    align-items:flex-start;
+  
+  @media(max-width:700px){
+    .community-header{align-items:flex-start}
+    .controls{width:100%}
+    .controls input[type="search"]{min-width:0;width:100%}
+    .stats-grid{grid-template-columns:1fr;gap:10px}
+    .stat-card{padding:10px;transform:none !important}
+    .stat-card:hover{transform:none !important}
+    .stat-card:hover .portrait{transform:none}
+    .stat-card:hover .stat-info .name{font-size:14px}
+    .portrait{width:56px;height:68px;flex:0 0 56px}
+    .hover-details{min-width:180px;padding:12px 14px}
   }
-
-  .controls{
-    width:100%;
-  }
-
-  .controls input[type="search"]{
-    min-width:0;
-    width:100%;
-  }
-
-  .community-wrap .stats-grid{
-    grid-template-columns:1fr;
-    width:100%;
-    gap:10px;
-  }
-
-  .community-wrap .stat-card{
-    width:100%;
-    min-width:0;
-    max-width:100%;
-    padding:10px;
-    transform:none !important;
-  }
-
-  .community-wrap .stat-card:hover{
-    transform:none !important;
-  }
-
-  .community-wrap .stat-card:hover .portrait{
-    transform:none;
-  }
-
-  .community-wrap .stat-card:hover .stat-info .name{
-    font-size:14px;
-  }
-
-  .community-wrap .portrait{
-    width:56px;
-    height:68px;
-    flex:0 0 56px;
-  }
-
-  .hover-details{
-    min-width:180px;
-    padding:12px 14px;
-   }
- }
-}
 </style>
 </head>
 <body>
@@ -419,7 +359,6 @@ function positionHoverPanel(card, panel) {
   let left = rect.left + rect.width / 2 - panelWidth / 2;
   let top = rect.bottom + 8;
   
-  // Vérifier si le panel sort de l'écran
   if (left < 0) left = 8;
   if (left + panelWidth > window.innerWidth) left = window.innerWidth - panelWidth - 8;
   if (top + panelHeight > window.innerHeight) top = rect.top - panelHeight - 8;
@@ -439,11 +378,10 @@ function renderGrid(list){
     const card = document.createElement("article");
     card.className = "stat-card";
 
-   const ranking = document.createElement("div");
-   ranking.className = `ranking-position ranking-position-${item.globalPosition <= 3 ? item.globalPosition : 'other'}`;
-   ranking.textContent = `#${item.globalPosition}`;
-   card.appendChild(ranking);
-
+    const ranking = document.createElement("div");
+    ranking.className = `ranking-position ranking-position-${item.globalPosition <= 3 ? item.globalPosition : 'other'}`;
+    ranking.textContent = `#${item.globalPosition}`;
+    card.appendChild(ranking);
 
     const portrait = createPortraitElement(item);
     card.appendChild(portrait);
@@ -495,7 +433,6 @@ function renderGrid(list){
     info.appendChild(statsRow);
     card.appendChild(info);
 
-    // Créer le panel de détails
     const panel = createHoverDetailsPanel(item);
     
     card.addEventListener("mouseenter", () => {
@@ -600,8 +537,9 @@ function loadCommunityStats(){
     
       mapped = sortList(mapped, sortEl.value);
       mapped.forEach((item, index) => {
-      item.globalPosition = index + 1;
+        item.globalPosition = index + 1;
       });
+      
       statusEl.style.display = "none";
       statusEl.className = "";
       applyFiltersAndRender();
