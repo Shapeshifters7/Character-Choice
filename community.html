@@ -55,16 +55,19 @@
   .ranking-position-2{color:#cfd5e8}
   .ranking-position-3{color:#d89062}
   
-  .portrait{
-    width:64px;height:80px;flex:0 0 64px;border-radius:6px;
+  .community-portrait{
+    width:64px;height:80px;
+    flex:0 0 64px;border-radius:6px;
     background:#0b0d1a;display:flex;align-items:center;justify-content:center;
     overflow:hidden;transition:all .28s ease;
   }
-  .stat-card:hover .portrait{
+  .stat-card:hover .community-portrait{
     transform:scale(1.15);
     border-radius:8px;
   }
-  .portrait img{width:100%;height:100%;object-fit:cover;display:block}
+  .community-portrait img{
+    width:100%;height:100%;object-fit:cover;display:block;
+  }
   
   .stat-info{
     flex:1;min-width:0;transition:all .28s ease;
@@ -156,12 +159,10 @@
     .stats-grid{grid-template-columns:1fr;gap:10px;align-items:start}
     .stat-card{padding:10px;transform:none !important;width:100%}
     .stat-card:hover{transform:none !important}
-    .stat-card:hover .portrait{transform:none}
+    .stat-card:hover .community-portrait{transform:none}
     .stat-card:hover .stat-info .name{font-size:14px}
-    .portrait{width:56px;height:68px;flex:0 0 56px}
+    .community-portrait{width:56px;height:68px;flex-basis:56px}
     .hover-details{min-width:180px;padding:12px 14px}
-  }
-</style>
   }
 </style>
 </head>
@@ -282,7 +283,7 @@ function getImageCandidates(item){
 
 function createPortraitElement(item){
   const container = document.createElement("div");
-  container.className = "portrait";
+  container.className = "community-portrait";
   const img = document.createElement("img");
   img.alt = item.displayName || item.name || item.id || "";
   const candidates = getImageCandidates(item);
