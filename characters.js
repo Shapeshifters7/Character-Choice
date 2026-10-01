@@ -4717,5 +4717,26 @@ const CHARACTERS = [
   "media": "Séries",
   "id": "c674",
   "wiki": "Melinda Gordon"
+},
+{
+  "name": "Kick-Ass",
+  "universe": "Kick-Ass",
+  "media": "Films",
+  "id": "c675",
+  "wiki": "Kick-Ass"
+},
+{
+  "name": "Hamtaro",
+  "universe": "Hamtaro",
+  "media": "Anime",
+  "id": "c676",
+  "wiki": "Hamtaro"
+},
+{
+  "name": "Jon Snow",
+  "universe": "Game of Thrones",
+  "media": "Séries",
+  "id": "c677",
+  "wiki": "Jon Snow"
 }
 ];
