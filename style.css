@@ -219,7 +219,9 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 
 @media(max-width:768px){
   body{font-size:14px}
-  main{padding:16px 12px 40px}
+  main{padding:8px 12px 40px}
+  .dashboard{margin-bottom:12px}
+  .arena-head{margin:8px 0 12px}
   .site-header .topbar{flex-direction:column;align-items:flex-start;gap:12px}
   .actions{width:100%;gap:6px}
   .secondary{flex:1;text-align:center;padding:10px 12px}
@@ -246,12 +248,11 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
   .history-row div:nth-child(3),.history-row div:nth-child(4){grid-column:2}
   .character-name{min-height:68px;font-size:clamp(20px,5vw,32px)}
   .universe, .card-record{font-size:12px}
-  .arena-head{flex-direction:column;gap:8px}
   .card-record{min-height:auto;padding:8px 0 4px}
 }
 
 @media(max-width:560px){
-  main{padding:16px 10px 40px}
+  main{padding:8px 10px 40px}
   .site-header .brand-mark{width:36px;height:36px;flex-basis:36px;font-size:16px}
   .site-header .brand h1{font-size:18px}
   .site-header .secondary{padding:7px 9px;font-size:11px;min-height:40px}
