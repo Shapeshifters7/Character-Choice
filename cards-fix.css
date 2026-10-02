@@ -142,6 +142,21 @@
     gap:14px;
   }
 
+  .character-card{
+    min-height:0;
+  }
+
+  .character-card .portrait{
+    height:clamp(280px,48vw,420px);
+    min-height:0;
+    max-height:none;
+  }
+
+  .card-record{
+    min-height:auto;
+    padding:8px 0 4px;
+  }
+
   .versus{
     order:2;
     width:70px;
