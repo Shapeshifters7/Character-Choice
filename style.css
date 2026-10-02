@@ -140,7 +140,7 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 .mini-stats div{display:flex;flex-direction:column;gap:5px}
 .mini-stats span{color:var(--muted);font-size:12px}
 .mini-stats strong{font-size:24px}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:#f8d84a;color:#14120a;font-weight:900;padding:12px 18px;border-radius:999px;z-index:20;pointer-events:none;transition:.2s}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:#f8d84a;color:#14120a;font-weight:900;padding:12px 18px;border-radius:999px;z-index:20;pointer-events:none;transition:opacity .35s ease,transform .35s ease}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 .history-panel{margin-top:14px}
@@ -153,7 +153,7 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 .history-heading input{width:min(300px,55%);background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none;font-size:14px}
 .history-heading input:focus{border-color:#6c73a4}
 
-.history-page .history-topbar{position:relative;width:100%;min-height:76px;padding:12px clamp(14px,3vw,34px);display:flex;align-items:center;justify-content:space-between;gap:18px;background:rgba(8,10,22,.90);border-bottom:1px solid rgba(255,255,255,.09);box-shadow:0 8px 28px rgba(0,0,0,.22)}
+.history-page .history-topbar{position:relative;width:100%;min-height:76px;padding:12px clamp(14px,3vw,34px);display:flex;align-items:center;justify-content:space-between;gap:18px;background:rgba(5,7,18,.90);border-bottom:1px solid rgba(255,255,255,.09);box-shadow:0 8px 28px rgba(0,0,0,.28)}
 .history-page .history-topbar .brand{display:flex;align-items:center;gap:11px;min-width:0}
 .history-page .history-topbar .brand-mark{width:42px;height:42px;flex:0 0 42px;border-radius:12px;font-size:20px}
 .history-page .history-topbar .brand h1{margin:0;font-size:clamp(19px,2.2vw,27px);line-height:1;letter-spacing:-.8px}
@@ -247,6 +247,7 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
   .character-name{min-height:68px;font-size:clamp(20px,5vw,32px)}
   .universe, .card-record{font-size:12px}
   .arena-head{flex-direction:column;gap:8px}
+  .card-record{min-height:auto;padding:8px 0 4px}
 }
 
 @media(max-width:560px){
@@ -798,4 +799,3 @@ a {
     animation:none
   }
 }
-
