@@ -4738,5 +4738,75 @@ const CHARACTERS = [
   "media": "Séries",
   "id": "c677",
   "wiki": "Jon Snow"
+},
+{
+  "name": "Caitlyn Snow",
+  "universe": "The Flash",
+  "media": "Séries",
+  "id": "c678",
+  "wiki": "Caitlyn Snow"
+},
+{
+  "name": "Jennifer Jareau (JJ)",
+  "universe": "Esprits criminels",
+  "media": "Séries",
+  "id": "c679",
+  "wiki": "Jennifer Jareau"
+},
+{
+  "name": "Lihaku",
+  "universe": "Les Carnets de l'Apothicaire",
+  "media": "Anime",
+  "id": "c680",
+  "wiki": "Lihaku"
+},
+{
+  "name": "Gorr",
+  "universe": "Marvel",
+  "media": "Films",
+  "id": "c681",
+  "wiki": "Gorr"
+},
+{
+  "name": "Klaus Mikaelson",
+  "universe": "The Vampire Diaries / The Originals",
+  "media": "Séries",
+  "id": "c682",
+  "wiki": "Klaus Mikaelson"
+},
+{
+  "name": "Mulan",
+  "universe": "Mulan",
+  "media": "Films",
+  "id": "c683",
+  "wiki": "Mulan"
+},
+{
+  "name": "Xena",
+  "universe": "Xena, la guerrière",
+  "media": "Séries",
+  "id": "c684",
+  "wiki": "Xena"
+},
+{
+  "name": "Roronoa Zoro",
+  "universe": "One Piece",
+  "media": "Anime",
+  "id": "c685",
+  "wiki": "Roronoa Zoro"
+},
+{
+  "name": "Alita",
+  "universe": "Alita: Battle Angel",
+  "media": "Films",
+  "id": "c686",
+  "wiki": "Alita"
+},
+{
+  "name": "JJ Maybank",
+  "universe": "Outer Banks",
+  "media": "Séries",
+  "id": "c687",
+  "wiki": "JJ Maybank"
 }
 ];
