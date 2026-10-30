@@ -4861,14 +4861,14 @@ const CHARACTERS = [
 {
   "name": "Axel Blaze",
   "universe": "Inazuma Eleven",
-  "media": "Anime",
+  "media": "Dessin Animé",
   "id": "c695",
   "wiki": "Axel Blaze"
 },
 {
   "name": "Flora",
   "universe": "Winx Club",
-  "media": "Séries",
+  "media": "Dessin Animé",
   "id": "c696",
   "wiki": "Flora (Winx Club)"
 },
@@ -4878,5 +4878,82 @@ const CHARACTERS = [
   "media": "Séries",
   "id": "c697",
   "wiki": "Eleven (Stranger Things)"
+},
+{
+  "name": "Kyo Sohma",
+  "universe": "Fruits Basket",
+  "media": "Manga",
+  "id": "c698",
+  "wiki": "Kyo Sohma"
+},
+{
+  "name": "Klaus Hargreeves",
+  "universe": "The Umbrella Academy",
+  "media": "Séries",
+  "id": "c699",
+  "wiki": "Klaus Hargreeves"
+},
+{
+  "name": "Morrigan",
+  "universe": "Dragon Age",
+  "media": "Jeux vidéo",
+  "id": "c700",
+  "wiki": "Morrigan (Dragon Age)"
+},
+{
+  "name": "Raven",
+  "universe": "Titans",
+  "media": "Séries",
+  "id": "c701",
+  "wiki": "Raven (Titans)"
+},
+{
+  "name": "Daryl Dixon",
+  "universe": "The Walking Dead",
+  "media": "Séries",
+  "id": "c702",
+  "wiki": "Daryl Dixon"
+},
+{
+  "name": "Sakura Kinomoto",
+  "universe": "Cardcaptor Sakura",
+  "media": "Manga",
+  "id": "c703",
+  "wiki": "Sakura Kinomoto"
+},
+{
+  "name": "Loki",
+  "universe": "Marvel",
+  "media": "Séries",
+  "id": "c704",
+  "wiki": "Loki (Marvel)"
+},
+{
+  "name": "Sirius Black",
+  "universe": "Harry Potter",
+  "media": "Films",
+  "id": "c705",
+  "wiki": "Sirius Black"
+},
+{
+  "name": "Mavis Dracula",
+  "universe": "Hôtel Transylvanie",
+  "media": "Films/Animation",
+  "id": "c706",
+  "wiki": "Mavis Dracula"
+},
+{
+  "name": "Nico di Angelo",
+  "universe": "Percy Jackson",
+  "media": "Romans",
+  "id": "c707",
+  "wiki": "Nico di Angelo"
+},
+{
+  "name": "Chloé Bourgeois",
+  "universe": "Miraculous",
+  "media": "Dessin Animé",
+  "id": "c708",
+  "wiki": "Chloé Bourgeois"
 }
 ];
