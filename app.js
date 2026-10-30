@@ -11,42 +11,12 @@ let state = null;
 let characterStats = loadCharacterStats();
 
 function getImageCandidates(character) {
-  const rawName = String(character?.name || "").trim();
   const id = String(character?.id ?? "").trim();
+  if (!id) return [];
 
-  const normalize = (value) =>
-    value
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/['']/g, "")
-      .replace(/&/g, "and")
-      .replace(/[^a-zA-Z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "")
-      .toLowerCase();
-
-  const variants = [
-    rawName,
-    rawName.replace(/[-–—]/g, " "),
-    rawName.replace(/\([^)]*\)/g, "").trim(),
-  ];
-
-  const slugs = [...new Set(variants.map(normalize).filter(Boolean))];
   const candidates = [];
-
-  const rawVariants = [...new Set(variants.map((v) => v.trim()).filter(Boolean))];
-  for (const name of rawVariants) {
-    candidates.push(`images/${id}_${name}.jpg`);
-    candidates.push(`images/${id}_${name}.jpeg`);
-    candidates.push(`images/${id}_${name}.png`);
-  }
-
-  for (const slug of slugs) {
-    candidates.push(`images/${id}_${slug}.jpg`);
-    candidates.push(`images/${id}_${slug}.jpeg`);
-    candidates.push(`images/${id}_${slug}.png`);
-    candidates.push(`images/${slug}.jpg`);
-    candidates.push(`images/${slug}.jpeg`);
-    candidates.push(`images/${slug}.png`);
+  for (const ext of [".jpg", ".png", ".jpeg"]) {
+    candidates.push(`images/${id}${ext}`);
   }
 
   return [...new Set(candidates)];
@@ -54,25 +24,6 @@ function getImageCandidates(character) {
 
 function getImagePath(character) {
   return getImageCandidates(character)[0] || "";
-}
-
-function slug(text) {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function initials(name) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((x) => x[0])
-    .join("")
-    .toUpperCase();
 }
 
 function loadCharacterStats() {
@@ -107,32 +58,32 @@ function loadState() {
       if (!Object.prototype.hasOwnProperty.call(raw, "lastSnapshot")) raw.lastSnapshot = null;
 
      if (raw.championId && raw.challengerId && Array.isArray(raw.usedIds)) {
-  if (!raw.usedIds.includes(raw.championId)) {
-    raw.usedIds.unshift(raw.championId);
-  }
+   if (!raw.usedIds.includes(raw.championId)) {
+     raw.usedIds.unshift(raw.championId);
+   }
 
-  if (!raw.usedIds.includes(raw.challengerId)) {
-    raw.usedIds.push(raw.challengerId);
-  }
+   if (!raw.usedIds.includes(raw.challengerId)) {
+     raw.usedIds.push(raw.challengerId);
+   }
 
-  const currentIds = CHARACTERS.map((character) => character.id);
+   const currentIds = CHARACTERS.map((character) => character.id);
 
-  /*
-   * Si l'ancienne partie utilisait le catalogue complet,
-   * on ajoute automatiquement les nouveaux personnages.
-   *
-   * Une partie personnalisée de 100 personnages reste inchangée.
-   */
-  if (Array.isArray(raw.poolIds) && raw.poolIds.length >= 645) {
-    raw.poolIds = currentIds;
-  }
+   /*
+    * Si l'ancienne partie utilisait le catalogue complet,
+    * on ajoute automatiquement les nouveaux personnages.
+    *
+    * Une partie personnalisée de 100 personnages reste inchangée.
+    */
+   if (Array.isArray(raw.poolIds) && raw.poolIds.length >= 645) {
+     raw.poolIds = currentIds;
+   }
 
-  if (!Array.isArray(raw.poolIds) || raw.poolIds.length === 0) {
-    raw.poolIds = currentIds;
-  }
+   if (!Array.isArray(raw.poolIds) || raw.poolIds.length === 0) {
+     raw.poolIds = currentIds;
+   }
 
-  return raw;
-}
+   return raw;
+ }
     }
   } catch {}
 
@@ -298,37 +249,10 @@ async function loadPortrait(character, el) {
   el.innerHTML = "";
   el.dataset.characterId = characterId;
 
-  const raw = String(character.name || "").trim();
-  const id = characterId;
-
-  const stripAccents = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const noApostrophe = (s) => s.replace(/[\'']/g, "");
-  const clean = (s) => noApostrophe(stripAccents(s));
-
-  const variants = [
-    raw,
-    clean(raw),
-    raw.replace(/[-–—]/g, "_"),
-    clean(raw).replace(/[-–—]/g, "_"),
-    raw.replace(/\s+/g, "_"),
-    clean(raw).replace(/\s+/g, "_"),
-    raw.replace(/[^A-Za-zÀ-ÿ0-9_-]+/g, "_"),
-    clean(raw).replace(/[^A-Za-z0-9_-]+/g, "_"),
-  ];
-
-  const names = [...new Set(variants.map((v) => v.replace(/^_+|_+$/g, "")).filter(Boolean))];
   const candidates = [];
-
-  if (id) {
-    for (const ext of [".jpg", ".jpeg", ".png"]) {
-      candidates.push(`images/${id}${ext}`);
-    }
-  }
-
-  for (const name of names) {
-    for (const ext of [".jpg", ".jpeg", ".png"]) {
-      candidates.push(`images/${id}_${name}${ext}`);
-      candidates.push(`images/${name}${ext}`);
+  if (characterId) {
+    for (const ext of [".jpg", ".png", ".jpeg"]) {
+      candidates.push(`images/${characterId}${ext}`);
     }
   }
 
