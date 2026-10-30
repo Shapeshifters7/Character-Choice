@@ -223,9 +223,9 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 
   .portrait {
     width: 100%;
-    height: clamp(180px, 34vw, 300px);
-    min-height: 180px;
-    max-height: 300px;
+    height: clamp(220px, 40vw, 330px);
+    min-height: 220px;
+    max-height: 330px;
     aspect-ratio: 4 / 5;
     flex: 0 0 auto;
     margin-bottom: 8px;
@@ -301,9 +301,9 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
   }
 
   .portrait {
-    height: clamp(150px, 39vw, 240px);
-    min-height: 150px;
-    max-height: 240px;
+    height: clamp(200px, 48vw, 260px);
+    min-height: 200px;
+    max-height: 260px;
   }
 
   .card-record {
