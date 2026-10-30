@@ -4857,5 +4857,26 @@ const CHARACTERS = [
   "media": "Films/Animation",
   "id": "c694",
   "wiki": "Sid (L'Âge de glace)"
+},
+{
+  "name": "Axel Blaze",
+  "universe": "Inazuma Eleven",
+  "media": "Anime",
+  "id": "c695",
+  "wiki": "Axel Blaze"
+},
+{
+  "name": "Flora",
+  "universe": "Winx Club",
+  "media": "Séries",
+  "id": "c696",
+  "wiki": "Flora (Winx Club)"
+},
+{
+  "name": "Eleven",
+  "universe": "Stranger Things",
+  "media": "Séries",
+  "id": "c697",
+  "wiki": "Eleven (Stranger Things)"
 }
 ];
