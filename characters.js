@@ -5039,5 +5039,5 @@ const CHARACTERS = [
   "media": "Séries",
   "id": "c720",
   "wiki": "Lance Hunter"
-}
+},
 ];
