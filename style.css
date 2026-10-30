@@ -1,3 +1,16 @@
+@media(max-width:900px){
+  .arena{grid-template-columns:1fr;gap:14px;padding:0 8px}
+  .character-card{height:auto;min-height:0;padding:12px}
+  .portrait{height:min(72vh,720px);min-height:0;max-height:none;aspect-ratio:4 / 5;flex:0 0 auto}
+  .versus{order:2;width:70px;height:70px;margin:0 auto}
+  .challenger-card{order:3}
+  .footer-grid{grid-template-columns:1fr;gap:14px}
+  .dashboard{flex-direction:column;gap:12px;align-items:stretch}
+  .pill{width:100%;justify-content:space-between}
+  .progress-wrap{width:100%;margin-left:0;max-width:none}
+  .record{width:100%;margin-left:0}
+}
+
 @media(max-width:768px){
   body{font-size:14px}
   main{padding:8px 12px 40px}
@@ -30,6 +43,7 @@
   .character-name{min-height:68px;font-size:clamp(20px,5vw,32px)}
   .universe, .card-record{font-size:12px}
   .card-record{min-height:auto;padding:8px 0 4px}
+  .record > div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px}
 }
 
 @media(max-width:560px){
@@ -81,7 +95,8 @@
   .pill{padding:7px 10px;font-size:12px}
   .progress-wrap{min-width:0}
   .progress-label{font-size:10px}
-  .record{font-size:12px}
+  .record{font-size:12px;margin-left:0;width:100%}
+  .record > div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px}
 
   .footer-grid{gap:10px}
   .panel{padding:12px;border-radius:14px}
