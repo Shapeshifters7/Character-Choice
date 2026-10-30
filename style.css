@@ -115,15 +115,16 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 .tip{color:var(--muted);font-size:14px}
 
 .arena{display:grid;grid-template-columns:minmax(0,1fr) 92px minmax(0,1fr);align-items:stretch;gap:20px;max-width:1500px;margin:0 auto}
-.character-card{position:relative;background:linear-gradient(180deg,rgba(28,32,61,.96),rgba(14,16,31,.98));border:1px solid var(--line);border-radius:24px;padding:10px;box-shadow:0 20px 60px rgba(0,0,0,.25);transition:.18s;cursor:pointer;overflow:hidden;display:flex;flex-direction:column;min-width:0;height:100%;min-height:760px}
+.character-card{position:relative;background:linear-gradient(180deg,rgba(28,32,61,.96),rgba(14,16,31,.98));border:1px solid var(--line);border-radius:24px;padding:10px;box-shadow:0 20px 60px rgba(0,0,0,.2);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
 .character-card:hover{transform:translateY(-4px);border-color:#666d9b}
 .champion-card{border-color:#9c842b;box-shadow:0 0 0 1px rgba(248,216,74,.08),0 20px 70px rgba(0,0,0,.28)}
 .card-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
 .label{font-size:11px;letter-spacing:.15em;color:#b8bdd9;font-weight:800}
-.portrait{width:100%;height:520px;min-height:520px;max-height:520px;aspect-ratio:auto;flex:0 0 520px;margin:0 0 14px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent;border-radius:0}
+.portrait{width:100%;height:520px;min-height:520px;max-height:520px;aspect-ratio:auto;flex:0 0 520px;margin:0 0 14px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(255,255,255,.02);border-radius:18px}
+.portrait.loading{background:rgba(255,255,255,.02)}
 .portrait.loading span{padding:20px;color:#b7bdd8;font-size:14px;text-align:center}
 .portrait.unavailable{display:flex;align-items:center;justify-content:center;color:#b7bdd8;font-size:13px;text-align:center;padding:20px;font-weight:700}
-.portrait img{display:block;width:auto !important;height:auto !important;max-width:100% !important;max-height:100% !important;object-fit:contain !important;object-position:center center !important;margin:0 auto}
+.portrait img{display:block;width:auto !important;height:auto !important;max-width:100% !important;max-height:100% !important;object-fit:contain !important;object-position:center center !important;transform:none;margin:0 auto;border:0;border-radius:0;background:transparent}
 .character-name{font-size:clamp(25px,3vw,42px);font-weight:900;letter-spacing:-1px;min-height:82px;display:flex;align-items:flex-start}
 .universe{color:var(--muted);margin-top:3px;min-height:24px}
 .card-record{display:flex;justify-content:space-between;align-items:center;padding:12px 0 6px;color:var(--muted);font-size:13px;min-height:48px}
@@ -140,7 +141,7 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 .mini-stats div{display:flex;flex-direction:column;gap:5px}
 .mini-stats span{color:var(--muted);font-size:12px}
 .mini-stats strong{font-size:24px}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:#f8d84a;color:#14120a;font-weight:900;padding:12px 18px;border-radius:999px;z-index:20;pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;background:#f8d84a;color:#14120a;font-weight:900;padding:12px 18px;border-radius:999px;z-index:20;pointer-events:none;box-shadow:0 12px 35px rgba(0,0,0,.24)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 .history-panel{margin-top:14px}
@@ -153,7 +154,7 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 .history-heading input{width:min(300px,55%);background:#0e1122;color:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none;font-size:14px}
 .history-heading input:focus{border-color:#6c73a4}
 
-.history-page .history-topbar{position:relative;width:100%;min-height:76px;padding:12px clamp(14px,3vw,34px);display:flex;align-items:center;justify-content:space-between;gap:18px;background:rgba(5,7,18,.90);border-bottom:1px solid rgba(255,255,255,.09);box-shadow:0 8px 28px rgba(0,0,0,.28)}
+.history-page .history-topbar{position:relative;width:100%;min-height:76px;padding:12px clamp(14px,3vw,34px);display:flex;align-items:center;justify-content:space-between;gap:18px;background:rgba(8,10,22,.88);border-bottom:1px solid rgba(255,255,255,.09)}
 .history-page .history-topbar .brand{display:flex;align-items:center;gap:11px;min-width:0}
 .history-page .history-topbar .brand-mark{width:42px;height:42px;flex:0 0 42px;border-radius:12px;font-size:20px}
 .history-page .history-topbar .brand h1{margin:0;font-size:clamp(19px,2.2vw,27px);line-height:1;letter-spacing:-.8px}
@@ -206,10 +207,12 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 
 @media(max-width:900px){
   .arena{grid-template-columns:1fr;gap:14px;padding:0 8px}
-  .character-card{height:auto;min-height:0;padding:12px}
-  .portrait{height:min(72vh,720px);min-height:0;max-height:none;aspect-ratio:4 / 5;flex:0 0 auto}
-  .versus{order:2;width:70px;height:70px;margin:0 auto}
+  .character-card{width:min(100%,460px);margin:0 auto;height:auto;min-height:0;padding:12px}
+  .portrait{width:100%;height:clamp(220px,42vw,420px);min-height:220px;max-height:420px;aspect-ratio:4 / 5;flex:0 0 auto;margin-bottom:12px}
+  .versus{order:2;width:64px;height:64px;margin:0 auto;font-size:18px}
   .challenger-card{order:3}
+  .card-record{flex-direction:column;align-items:flex-start;gap:6px;min-height:auto;padding-top:10px}
+  .card-streak{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%}
   .footer-grid{grid-template-columns:1fr;gap:14px}
   .dashboard{flex-direction:column;gap:12px}
   .pill{width:100%;justify-content:space-between}
@@ -258,7 +261,7 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
   .site-header .secondary{padding:7px 9px;font-size:11px;min-height:40px}
   .site-header .topbar{min-height:94px}
   .character-card{padding:8px;min-height:0}
-  .portrait{height:auto;min-height:0;max-height:none;aspect-ratio:4 / 5;flex-basis:auto}
+  .portrait{height:clamp(180px,48vw,300px);min-height:180px;max-height:300px;aspect-ratio:4 / 5;flex-basis:auto}
   .character-name{min-height:60px}
   .choose{padding:12px 14px;font-size:13px;min-height:40px}
   button{min-height:40px}
