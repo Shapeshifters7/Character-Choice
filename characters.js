@@ -4808,5 +4808,54 @@ const CHARACTERS = [
   "media": "Séries",
   "id": "c687",
   "wiki": "JJ Maybank"
+},
+{
+  "name": "Cristina Yang",
+  "universe": "Grey's Anatomy",
+  "media": "Séries",
+  "id": "c688",
+  "wiki": "Cristina Yang"
+},
+{
+  "name": "Venom",
+  "universe": "Marvel",
+  "media": "Films",
+  "id": "c689",
+  "wiki": "Venom"
+},
+{
+  "name": "Maestro",
+  "universe": "Il était une fois… la Vie",
+  "media": "Dessin Animé",
+  "id": "c690",
+  "wiki": "Maestro (Il était une fois… la Vie)"
+},
+{
+  "name": "Clover",
+  "universe": "Totally Spies!",
+  "media": "Dessin Animé",
+  "id": "c691",
+  "wiki": "Clover Ewing"
+},
+{
+  "name": "Titeuf",
+  "universe": "Titeuf",
+  "media": "Dessin Animé",
+  "id": "c692",
+  "wiki": "Titeuf"
+},
+{
+  "name": "Arthur",
+  "universe": "Arthur et les Minimoys",
+  "media": "Films",
+  "id": "c693",
+  "wiki": "Arthur (Arthur et les Minimoys)"
+},
+{
+  "name": "Sid",
+  "universe": "L'Âge de glace",
+  "media": "Films/Animation",
+  "id": "c694",
+  "wiki": "Sid (L'Âge de glace)"
 }
 ];
