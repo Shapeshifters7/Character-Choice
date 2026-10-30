@@ -4955,5 +4955,89 @@ const CHARACTERS = [
   "media": "Dessin Animé",
   "id": "c708",
   "wiki": "Chloé Bourgeois"
+},
+{
+  "name": "Kaz Brekker",
+  "universe": "Shadow and Bone",
+  "media": "Séries",
+  "id": "c709",
+  "wiki": "Kaz Brekker"
+},
+{
+  "name": "Aziraphale",
+  "universe": "Good Omens",
+  "media": "Séries",
+  "id": "c710",
+  "wiki": "Aziraphale"
+},
+{
+  "name": "Misa Amane",
+  "universe": "Death Note",
+  "media": "Manga",
+  "id": "c711",
+  "wiki": "Misa Amane"
+},
+{
+  "name": "Lestat de Lioncourt",
+  "universe": "Entretien avec un vampire",
+  "media": "Séries/Romans",
+  "id": "c712",
+  "wiki": "Lestat de Lioncourt"
+},
+{
+  "name": "Selina Kyle (Catwoman)",
+  "universe": "DC",
+  "media": "Comics",
+  "id": "c713",
+  "wiki": "Selina Kyle"
+},
+{
+  "name": "Killua Zoldyck",
+  "universe": "Hunter × Hunter",
+  "media": "Manga",
+  "id": "c714",
+  "wiki": "Killua Zoldyck"
+},
+{
+  "name": "Morgane",
+  "universe": "Merlin",
+  "media": "Séries",
+  "id": "c715",
+  "wiki": "Morgane (Merlin)"
+},
+{
+  "name": "Nina Zenik",
+  "universe": "Shadow and Bone",
+  "media": "Séries",
+  "id": "c716",
+  "wiki": "Nina Zenik"
+},
+{
+  "name": "Klaus Baudelaire",
+  "universe": "Les Désastreuses Aventures des orphelins Baudelaire",
+  "media": "Séries",
+  "id": "c717",
+  "wiki": "Klaus Baudelaire"
+},
+{
+  "name": "Jinx",
+  "universe": "Arcane",
+  "media": "Séries/Animation",
+  "id": "c718",
+  "wiki": "Jinx (Arcane)"
+},
+{
+  "name": "Sabrina Spellman",
+  "universe": "Les Nouvelles Aventures de Sabrina",
+  "media": "Séries",
+  "id": "c719",
+  "wiki": "Sabrina Spellman"
+},
+{
+  "name": "Lance Hunter",
+  "universe": "Marvel / Marvel : Les Agents du SHIELD",
+  "media": "Séries",
+  "id": "c720",
+  "wiki": "Lance Hunter"
 }
 ];
