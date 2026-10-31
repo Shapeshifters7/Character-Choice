@@ -5040,4 +5040,137 @@ const CHARACTERS = [
   "id": "c720",
   "wiki": "Lance Hunter"
 },
+{
+  "name": "Athéna (Saori Kido)",
+  "universe": "Saint Seiya",
+  "media": "Manga",
+  "id": "c721",
+  "wiki": "Saori Kido"
+},
+{
+  "name": "Crématorium (Dabi)",
+  "universe": "My Hero Academia",
+  "media": "Manga",
+  "id": "c722",
+  "wiki": "Dabi"
+},
+{
+  "name": "Alan Parrish",
+  "universe": "Jumanji",
+  "media": "Films",
+  "id": "c723",
+  "wiki": "Alan Parrish"
+},
+{
+  "name": "Malcolm",
+  "universe": "Malcolm",
+  "media": "Séries",
+  "id": "c724",
+  "wiki": "Malcolm Wilkerson"
+},
+{
+  "name": "Phoebe Halliwell",
+  "universe": "Charmed",
+  "media": "Séries",
+  "id": "c725",
+  "wiki": "Phoebe Halliwell"
+},
+{
+  "name": "Byron Sully",
+  "universe": "Docteur Quinn, femme médecin",
+  "media": "Séries",
+  "id": "c726",
+  "wiki": "Byron Sully"
+},
+{
+  "name": "Martin Mystère",
+  "universe": "Martin Mystère",
+  "media": "Dessin Animé",
+  "id": "c727",
+  "wiki": "Martin Mystère"
+},
+{
+  "name": "Stitch",
+  "universe": "Lilo et Stitch",
+  "media": "Films/Animation",
+  "id": "c728",
+  "wiki": "Stitch"
+},
+{
+  "name": "Ryan Atwood",
+  "universe": "Newport Beach",
+  "media": "Séries",
+  "id": "c729",
+  "wiki": "Ryan Atwood"
+},
+{
+  "name": "Esteban",
+  "universe": "Les Mystérieuses Cités d'or",
+  "media": "Dessin Animé",
+  "id": "c730",
+  "wiki": "Esteban (Les Mystérieuses Cités d'or)"
+},
+{
+  "name": "Alphonse Elric",
+  "universe": "Fullmetal Alchemist",
+  "media": "Manga",
+  "id": "c731",
+  "wiki": "Alphonse Elric"
+},
+{
+  "name": "Nicky Larson",
+  "universe": "Nicky Larson",
+  "media": "Manga",
+  "id": "c732",
+  "wiki": "Nicky Larson"
+},
+{
+  "name": "Candy Caramella",
+  "universe": "Les Zinzins de l'espace",
+  "media": "Dessin Animé",
+  "id": "c733",
+  "wiki": "Candy Caramella"
+},
+{
+  "name": "Razmo",
+  "universe": "Ratz",
+  "media": "Dessin Animé",
+  "id": "c734",
+  "wiki": "Razmo"
+},
+{
+  "name": "Zack Martin",
+  "universe": "La Vie de palace de Zack et Cody",
+  "media": "Séries",
+  "id": "c735",
+  "wiki": "Zack Martin"
+},
+{
+  "name": "Cody Martin",
+  "universe": "La Vie de palace de Zack et Cody",
+  "media": "Séries",
+  "id": "c736",
+  "wiki": "Cody Martin"
+},
+{
+  "name": "Michael Scofield",
+  "universe": "Prison Break",
+  "media": "Séries",
+  "id": "c737",
+  "wiki": "Michael Scofield"
+},
+{
+  "name": "Alex Russo",
+  "universe": "Les Sorciers de Waverly Place",
+  "media": "Séries",
+  "id": "c738",
+  "wiki": "Alex Russo"
+},
+{
+  "name": "Dr. Zoidberg",
+  "universe": "Futurama",
+  "media": "Séries",
+  "id": "c739",
+  "wiki": "Dr. Zoidberg"
+}
 ];
