@@ -5172,5 +5172,12 @@ const CHARACTERS = [
   "media": "Séries",
   "id": "c739",
   "wiki": "Dr. Zoidberg"
-}
+},
+{
+  "name": "Alexis Carrington",
+  "universe": "Dynastie",
+  "media": "Séries",
+  "id": "c740",
+  "wiki": "Alexis Carrington"
+},
 ];
