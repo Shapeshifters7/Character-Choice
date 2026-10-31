@@ -223,13 +223,27 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
 
   .portrait {
     width: 100%;
-    height: clamp(220px, 40vw, 330px);
+    height: auto;
     min-height: 220px;
-    max-height: 330px;
+    max-height: 340px;
     aspect-ratio: 4 / 5;
     flex: 0 0 auto;
     margin-bottom: 8px;
     border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .portrait img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain !important;
+    object-position: center center !important;
   }
 
   .character-name {
@@ -301,7 +315,6 @@ main{max-width:1400px;margin:auto;padding:28px clamp(14px,3vw,36px) 60px}
   }
 
   .portrait {
-    height: clamp(200px, 48vw, 260px);
     min-height: 200px;
     max-height: 260px;
   }
